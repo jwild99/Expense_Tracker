@@ -2,6 +2,7 @@ import os
 import platform
 import datetime
 import sys
+import json 
 
 from expense import Expense
 
@@ -29,8 +30,9 @@ months = [
     "December"
 ]
 
-exp_file_path = "expenses.csv"
-info_file_path = "info.txt"
+info_file_path = "info.json"
+most_recent_exp_path = ""
+
 cur_month = 0
 cur_day = 0
 cur_year = 0
@@ -148,7 +150,10 @@ def get_user_expense():
     return new_exp
 
 def save_expense(exp: Expense):
-    global exp_file_path
+    global most_recent_exp_path
+
+    exp_file_path = f"expenses/expenses{exp.year}.csv"
+    most_recent_exp_path = f"expenses/expenses{exp.year}.csv"
 
     with open(exp_file_path, "a") as file:
         file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year}\n")
@@ -158,35 +163,41 @@ def save_expense(exp: Expense):
     print(f"Saved expense: [{exp.get_exp()}] to {exp_file_path}")
 
 def get_all_expenses() -> list[Expense]:
-    expenses: list[Expense] = []
+    exp_file_dir = f"expenses/"
+    file_count = sum(1 for filename in os.listdir(exp_file_dir) if os.path.isfile(os.path.join(exp_file_dir, filename)))
 
-    with open(exp_file_path, 'r') as file:
-        lines = file.readlines()
+    expenses: list[Expense] = [[] for _ in range(file_count)]
 
-        if len(lines) > 0:
+    for filepath in os.listdir(exp_file_dir):
+        with open(f"expenses/{filepath}", 'r') as file:
+            lines = file.readlines()
+
             for line in lines:
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year = line.strip().split(',')
 
                 expenses.append(Expense(name=exp_name, category=exp_cat, 
                             amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year)))
-        
-        file.close()            
+            
+            file.close()            
     
     return expenses
 
 def get_cur_expenses() -> list[Expense]:
     expenses: list[Expense] = []
+    exp_file_path = f"expenses/expenses{cur_year}.csv"
+
+    if not os.path.exists(exp_file_path):
+        return []
 
     with open(exp_file_path, 'r') as file:
         lines = file.readlines()
 
-        if len(lines) > 0:
-            for line in lines:
-                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year = line.strip().split(',')
+        for line in lines:
+            exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year = line.strip().split(',')
 
-                if int(exp_month) == cur_month and int(exp_year) == cur_year:
-                    expenses.append(Expense(name=exp_name, category=exp_cat, amount=float(exp_amount), 
-                                    month=int(exp_month), day=int(exp_day), year=int(exp_year)))
+            if int(exp_month) == cur_month and int(exp_year) == cur_year:
+                expenses.append(Expense(name=exp_name, category=exp_cat, amount=float(exp_amount), 
+                                month=int(exp_month), day=int(exp_day), year=int(exp_year)))
                     
         file.close()
                     
@@ -196,11 +207,11 @@ def get_budgets():
     global info_file_path, total_budget, grcry_budget, gnrl_budget
 
     with open(info_file_path, 'r') as file:
-        lines = file.readlines()
+        data = json.load(file)
 
-        total_budget = float(lines[0])
-        gnrl_budget = float(lines[1])
-        grcry_budget = float(lines[2])
+        total_budget = float(data["total_budget"])
+        gnrl_budget = float(data["general_budget"])
+        grcry_budget = float(data["grocery_budget"])
 
         file.close()
 
@@ -294,16 +305,23 @@ def get_month_summary():
 
 def get_alltime_summary():
     flush_terminal()
+    amount_by_cat_lists = []
+    daily_expenses_lists = []
 
     expenses = get_all_expenses()
-    amount_by_cat = get_amount_by_cat(expenses)
-    daily_expenses = get_daily_expenses(expenses)
+    
+    for exp_list in expenses:
+        amount_by_cat_lists.append(get_amount_by_cat(exp_list))
+
+        daily_expenses_lists.append(get_daily_expenses(exp_list))
+
     sum_expenses(expenses)
 
     if len(expenses) > 0:
-        print_daily_expenses(daily_expenses)
-        print("\n\n")
-        print_amount_by_cat(amount_by_cat)
+        for item in daily_expenses_lists:
+            print(item)
+        for item in amount_by_cat_lists:
+            print(item)
     else:
         print("No expenses to show at this time.")
 
@@ -314,9 +332,9 @@ def get_alltime_summary():
         continue
 
 def undo_last_expense():
-    global exp_file_path
+    global most_recent_exp_path
 
-    with open(exp_file_path, 'r') as file:
+    with open(most_recent_exp_path, 'r') as file:
         lines = file.readlines()  
 
         file.close()
@@ -324,7 +342,7 @@ def undo_last_expense():
     if lines:  
         lines = lines[:-1]  
 
-        with open(exp_file_path, 'w') as file:
+        with open(most_recent_exp_path, 'w') as file:
             file.writelines(lines) 
 
             file.close()
@@ -361,8 +379,6 @@ def cli_loop():
             get_alltime_summary()
 
 def main():
-    global exp_file_path, info_file_path, cur_month, cur_day, months
-
     init()
     cli_loop()
 
