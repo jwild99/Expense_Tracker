@@ -177,7 +177,7 @@ def get_all_expenses() -> dict:
                             amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year))
 
                 if expense.year in expenses_dict:
-                    expenses_dict[expense.year].append(expense)
+                    expenses_dict[expense.year][int(exp_month) - 1].append(expense)
                 else:
                     expenses_dict[expense.year] = [[] for _ in range(12)]
                     expenses_dict[expense.year][int(exp_month) - 1].append(expense)
@@ -341,19 +341,20 @@ def get_alltime_summary():
     
     if len(expenses) > 0:
         for year_key in expenses.keys():
-            months_index = 0
-            for month_list in expenses[year_key]:
-                if (int(year_key) == cur_year and months_index == cur_month_index):
-                    reached_current = True
-                    break
+            # months_index = 0
+            # for month_list in expenses[year_key]:
+            #     if (int(year_key) == cur_year and months_index == cur_month_index):
+            #         reached_current = True
+            #         break
 
-                print_monthly_exp_summary(month_list, months_index, year=int(year_key))
-                months_index += 1
+            #     print_monthly_exp_summary(month_list, months_index, year=int(year_key))
+            #     months_index += 1
 
-            if reached_current:
-                print_monthly_exp_summary(month_list, months_index, year=int(year_key))
-                sum_expenses(month_list)
-                break
+            # if reached_current:
+            #     print_monthly_exp_summary(month_list, months_index, year=int(year_key))
+            #     sum_expenses(month_list)
+            #     break
+            print(expenses[year_key])
 
     else:
         print("No expenses to show at this time.")
