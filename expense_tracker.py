@@ -47,7 +47,7 @@ gnrl_exp = 0
 grcry_exp = 0
 
 # First line formatting in csv:
-# total budget, misc budget, grocery budget, total spending this month, month number, date number, year number
+# total budget, misc budget, grocery budget, total spending this month, month number, date number, year number, true expense?
 
 def flush_terminal():
     print("\n" * 500)
