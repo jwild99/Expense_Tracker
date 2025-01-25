@@ -24,7 +24,7 @@ months = [
     "June",
     "July",
     "August",
-    "september",
+    "September",
     "October",
     "November",
     "December"
@@ -162,12 +162,10 @@ def save_expense(exp: Expense):
 
     print(f"Saved expense: [{exp.get_exp()}] to {exp_file_path}")
 
-def get_all_expenses() -> list[Expense]:
+def get_all_expenses() -> dict:
     exp_file_dir = f"expenses/"
-    file_count = sum(1 for filename in os.listdir(exp_file_dir) if os.path.isfile(os.path.join(exp_file_dir, filename)))
-
-    expenses: list[Expense] = [[] for _ in range(file_count)]
-
+    expenses_dict = {}
+    
     for filepath in os.listdir(exp_file_dir):
         with open(f"expenses/{filepath}", 'r') as file:
             lines = file.readlines()
@@ -175,12 +173,18 @@ def get_all_expenses() -> list[Expense]:
             for line in lines:
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year = line.strip().split(',')
 
-                expenses.append(Expense(name=exp_name, category=exp_cat, 
-                            amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year)))
-            
-            file.close()            
-    
-    return expenses
+                expense = Expense(name=exp_name, category=exp_cat, 
+                            amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year))
+
+                if expense.year in expenses_dict:
+                    expenses_dict[expense.year].append(expense)
+                else:
+                    expenses_dict[expense.year] = [[] for _ in range(12)]
+                    expenses_dict[expense.year][int(exp_month) - 1].append(expense)
+
+            file.close() 
+
+    return expenses_dict
 
 def get_cur_expenses() -> list[Expense]:
     expenses: list[Expense] = []
@@ -303,29 +307,56 @@ def get_month_summary():
     while input("") != 'x':
         continue
 
-def get_alltime_summary():
-    flush_terminal()
-    amount_by_cat_lists = []
-    daily_expenses_lists = []
+def print_monthly_exp_summary(expenses: list[Expense], months_index, year: int):
+    global total_budget, total_exp, gnrl_budget, gnrl_exp, grcry_budget, grcry_exp, months
 
-    expenses = get_all_expenses()
-    
-    for exp_list in expenses:
-        amount_by_cat_lists.append(get_amount_by_cat(exp_list))
-
-        daily_expenses_lists.append(get_daily_expenses(exp_list))
-
+    amount_by_cat = get_amount_by_cat(expenses)
+    daily_expenses = get_daily_expenses(expenses)
     sum_expenses(expenses)
 
+    print(f"Summary for {months[months_index]}, {year}")
+    print(f"--------------------------------")
+
     if len(expenses) > 0:
-        for item in daily_expenses_lists:
-            print(item)
-        for item in amount_by_cat_lists:
-            print(item)
+        print_daily_expenses(daily_expenses)
+        print("\n")
+        print_amount_by_cat(amount_by_cat)
+    else:
+        print("No expenses to show for this month.")
+
+    print(f"\nYou used ${total_budget - total_exp} of ${total_budget} total budget for {months[months_index]}, {year}")
+    print(f"    You used ${gnrl_budget - gnrl_exp} of ${gnrl_budget} general budget for {months[months_index]}, {year}")
+    print(f"    You used ${grcry_budget - grcry_exp} of ${grcry_budget} grocery for {months[months_index]}, {year}")
+
+    print("\n\n")
+
+def get_alltime_summary():
+    global cur_month, cur_year
+    expenses = get_all_expenses()
+    reached_current = False
+    months_index = 0
+    cur_month_index = cur_month - 1
+
+    flush_terminal()
+    
+    if len(expenses) > 0:
+        for year_key in expenses.keys():
+            months_index = 0
+            for month_list in expenses[year_key]:
+                if (int(year_key) == cur_year and months_index == cur_month_index):
+                    reached_current = True
+                    break
+
+                print_monthly_exp_summary(month_list, months_index, year=int(year_key))
+                months_index += 1
+
+            if reached_current:
+                print_monthly_exp_summary(month_list, months_index, year=int(year_key))
+                sum_expenses(month_list)
+                break
+
     else:
         print("No expenses to show at this time.")
-
-    print_remaining_budget()
 
     print("\n'x' to go back")
     while input("") != 'x':
