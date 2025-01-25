@@ -341,19 +341,19 @@ def get_alltime_summary():
     
     if len(expenses) > 0:
         for year_key in expenses.keys():
-            # months_index = 0
-            # for month_list in expenses[year_key]:
-            #     if (int(year_key) == cur_year and months_index == cur_month_index):
-            #         reached_current = True
-            #         break
+            months_index = 0
+            for month_list in expenses[year_key]:
+                if (int(year_key) == cur_year and months_index == cur_month_index):
+                    reached_current = True
+                    break
 
-            #     print_monthly_exp_summary(month_list, months_index, year=int(year_key))
-            #     months_index += 1
+                print_monthly_exp_summary(month_list, months_index, year=int(year_key))
+                months_index += 1
 
-            # if reached_current:
-            #     print_monthly_exp_summary(month_list, months_index, year=int(year_key))
-            #     sum_expenses(month_list)
-            #     break
+            if reached_current:
+                print_monthly_exp_summary(month_list, months_index, year=int(year_key))
+                sum_expenses(month_list)
+                break
             print(expenses[year_key])
 
     else:
