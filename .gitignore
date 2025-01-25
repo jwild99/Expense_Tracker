@@ -1,2 +1,4 @@
 expenses/*
+!expenses/
+!expenses/.gitkeep
 __pycache__
