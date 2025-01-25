@@ -9,6 +9,7 @@ from expense import Expense
 exp_categories = [
     "Food",
     "Home",
+    "Laundry"
     "Grocery",
     "Work",
     "Travel",
@@ -149,12 +150,23 @@ def get_user_expense():
 
     while True:
         try:
-            inp = input("Is this a 'true expense'? [y/n] (leave blank for 'y'): ").strip().lower()
+            exp_cd = input("Is this a credit or debit expense? [c/d]: ")
 
-            if inp == '':
+            if exp_cd.strip().lower() != 'c' and exp_cd.strip().lower() != 'd':
+                raise Exception
+            
+            flush_terminal()
+            break 
+        except Exception:
+            flush_terminal()
+            print(f"\n\n~~ERROR~~\nInvalid credit/debit value entered. Please enter either 'c' or 'd'.\n\n")
+
+    while True:
+        try:
+            tru_exp = input("Is this a 'true expense'? [y/n] (leave blank for 'y'): ").strip().lower()
+
+            if tru_exp == '':
                 tru_exp = 'y'
-            else:
-                tru_exp = inp
 
             if tru_exp.strip().lower() != 'y' and tru_exp.strip().lower() != 'n':
                 raise Exception
@@ -164,7 +176,8 @@ def get_user_expense():
             flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid 'true expense' value entered. Please enter either 'y' or 'n'.\n\n")
 
-    new_exp = Expense(name=exp_name, category=exp_categories[cat_num], amount=exp_amount, month=exp_month, day=exp_day, year=exp_year, tru_exp=tru_exp)
+    new_exp = Expense(name=exp_name, category=exp_categories[cat_num], amount=exp_amount, month=exp_month, 
+                      day=exp_day, year=exp_year, cd=exp_cd, tru_exp=tru_exp)
     flush_terminal()
     return new_exp
 
@@ -175,7 +188,7 @@ def save_expense(exp: Expense):
     most_recent_exp_path = f"expenses/expenses{exp.year}.csv"
 
     with open(exp_file_path, "a") as file:
-        file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.tru_exp}\n")
+        file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.cd},{exp.tru_exp}\n")
 
         file.close()
 
@@ -190,11 +203,11 @@ def get_all_expenses() -> dict:
             lines = file.readlines()
 
             for line in lines:
-                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, tru_exp = line.strip().split(',')
+                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp = line.strip().split(',')
 
                 if tru_exp.strip().lower() == 'y':
                     expense = Expense(name=exp_name, category=exp_cat, 
-                                amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), tru_exp=tru_exp)
+                                amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp)
 
                     if expense.year in expenses_dict:
                         expenses_dict[expense.year][int(exp_month) - 1].append(expense)
@@ -217,11 +230,11 @@ def get_cur_expenses() -> list[Expense]:
         lines = file.readlines()
 
         for line in lines:
-            exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, tru_exp = line.strip().split(',')
+            exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp = line.strip().split(',')
 
             if int(exp_month) == cur_month and int(exp_year) == cur_year and tru_exp.strip().lower() == 'y':
                 expenses.append(Expense(name=exp_name, category=exp_cat, amount=float(exp_amount), 
-                                month=int(exp_month), day=int(exp_day), year=int(exp_year), tru_exp=tru_exp))
+                                month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp))
                     
         file.close()
                     
@@ -347,9 +360,7 @@ def print_monthly_exp_summary(expenses: list[Expense], months_index, year: int, 
     print(f"\nYou spent ${total_exp} of ${total_budget} total budget in {months[months_index]}, {year}")
     print(f"    You spent ${gnrl_exp} of ${gnrl_budget} general budget in {months[months_index]}, {year}")
     print(f"    You spent ${grcry_exp} of ${grcry_budget} grocery budget in {months[months_index]}, {year}")
-
-    if not reached_current:
-        print("\n\n\n\n\n")
+    print("\n\n\n\n\n")
 
 def get_alltime_summary():
     global cur_month, cur_year
