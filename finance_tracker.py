@@ -147,7 +147,7 @@ def get_user_year() -> int:
 def get_user_amount() -> float:
     while True:
         try:
-            amount = float(input("Enter expense amount: "))
+            amount = float(input("Enter amount: "))
             flush_terminal()
             break
         except Exception:
@@ -267,7 +267,7 @@ def save_expense(exp: Item) -> None:
     most_recent_itm_path = f"records/records{exp.year}.csv"
 
     with open(exp_file_path, 'a') as file:
-        file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.cd},{exp.tru_exp},{exp.itm_type}\n")
+        file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.cd},{exp.tru_exp},{exp.itm_type},{exp.b_after}\n")
 
         file.close()
 
@@ -282,7 +282,7 @@ def save_deposit(dep: Item) -> None:
     most_recent_itm_path = f"records/records{dep.year}.csv"
 
     with open(dep_file_path, "a") as file:
-        file.write(f"{dep.name},{dep.category},{dep.amount},{dep.month},{dep.day},{dep.year},{dep.cd},{dep.tru_exp},{dep.itm_type}\n")
+        file.write(f"{dep.name},{dep.category},{dep.amount},{dep.month},{dep.day},{dep.year},{dep.cd},{dep.tru_exp},{dep.itm_type},{dep.b_after}\n")
 
         file.close()
 
@@ -299,11 +299,11 @@ def get_all_expenses() -> dict:
             lines = file.readlines()
 
             for line in lines:
-                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type = line.strip().split(',')
+                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type, b_after = line.strip().split(',')
 
                 if tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp' and exp_name != "[CREDIT CARD PAYMENT]":
                     expense = Item(name=exp_name, category=exp_cat, 
-                                amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type)
+                                amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type, b_after=float(b_after))
 
                     if expense.year in expenses_dict:
                         expenses_dict[expense.year][int(exp_month) - 1].append(expense)
@@ -326,11 +326,11 @@ def get_cur_expenses() -> list[Item]:
         lines = file.readlines()
 
         for line in lines:
-            exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type = line.strip().split(',')
+            exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type, b_after = line.strip().split(',')
 
             if int(exp_month) == cur_month and int(exp_year) == cur_year and tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp' and exp_name != "[CREDIT CARD PAYMENT]":
                 expenses.append(Item(name=exp_name, category=exp_cat, amount=float(exp_amount), 
-                                month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type))
+                                month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type, b_after=float(b_after)))
                     
         file.close()
                     
@@ -386,16 +386,20 @@ def print_amount_by_cat(amount_by_cat: dict) -> None:
     print("Monthly expenses by category:")
     for key, amount in amount_by_cat.items():
         percentage = (amount / total_budget) * 100
-        print(f"    {key}:   \t${amount:.2f}       {percentage:.2f}%")
+        if key.strip().lower() == "grocery":
+            print(f"    {key}:   \t${amount:.2f}       {percentage:.2f}% \t -want-> 20%") 
+        else:
+            print(f"    {key}:   \t${amount:.2f}       {percentage:.2f}%")
 
 def print_remaining_budget() -> None:
     global total_budget, total_exp, gnrl_budget, gnrl_exp, grcry_budget, grcry_exp
 
-    print(f"\n${total_budget - total_exp} of total budget remaining   \t[${total_budget}]")
-    print(f"${gnrl_budget - gnrl_exp} of general budget remaining \t[${gnrl_budget}]")
-    print(f"${grcry_budget - grcry_exp} of grocery budget remaining \t[${grcry_budget}]")
+    print(f"\n${total_budget - total_exp:.2f} of total budget remaining   \t[${total_budget:.2f}]")
+    print(f"${gnrl_budget - gnrl_exp:.2f} of general budget remaining \t[${gnrl_budget:.2f}]")
+    print(f"${grcry_budget - grcry_exp:.2f} of grocery budget remaining \t[${grcry_budget:.2f}]")
 
 def print_daily_expenses(daily_expenses: list[Item]) -> None:
+    print("Date \t\t\tCategory \tAmount \t\tCard Type \tBalance After   Name\n")
     for i in range(len(daily_expenses)):
             for exp in daily_expenses[i]:
                 print(exp)
@@ -454,6 +458,9 @@ def get_full_summary() -> None:
 def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int, reached_current: bool) -> None:
     global total_budget, total_exp, gnrl_budget, gnrl_exp, grcry_budget, grcry_exp, months
 
+    if len(expenses) <= 0:
+        return
+
     amount_by_cat = get_amount_by_cat(expenses)
     daily_expenses = get_daily_expenses(expenses)
     sum_expenses(expenses)
@@ -472,9 +479,31 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
     else:
         print("No expenses to show for this month.")
 
-    print(f"\n${total_exp} \tof ${total_budget} total   budget in {months[months_index]}, {year}")
-    print(f"${gnrl_exp} \tof ${gnrl_budget} general budget in {months[months_index]}, {year}")
-    print(f"${grcry_exp}     \tof ${grcry_budget} grocery budget in {months[months_index]}, {year}")
+    if total_exp < total_budget:
+        total_diff = f"+{total_budget - total_exp:.2f}"
+    elif total_exp > total_budget:
+        total_diff = f"{total_budget - total_exp:.2f}"
+    else:
+        total_diff = "0"
+
+    if gnrl_exp < gnrl_budget:
+        gnrl_diff = f"+{gnrl_budget - gnrl_exp:.2f}"
+    elif gnrl_exp > gnrl_budget:
+        gnrl_diff = f"{gnrl_budget - gnrl_exp:.2f}"
+    else:
+        gnrl_diff = "0"
+
+    if grcry_exp < grcry_budget:
+        grcy_diff = f"+{total_budget - grcry_exp:.2f}"
+    elif grcry_exp > grcry_budget:
+        grcy_diff = f"{grcry_budget - grcry_exp:.2f}"
+    else:
+        grcy_diff = "0"
+
+
+    print(f"\n\n${total_exp:.2f} \tof ${total_budget:.2f} total   budget in {months[months_index]}, {year} \t[{total_diff}]")
+    print(f"${gnrl_exp:.2f} \tof ${gnrl_budget:.2f} general budget in {months[months_index]}, {year} \t[{gnrl_diff}]")
+    print(f"${grcry_exp:.2f} \tof ${grcry_budget:.2f} grocery budget in {months[months_index]}, {year} \t[{grcy_diff}]")
     
     if reached_current:
         print("\n")
@@ -615,7 +644,7 @@ def overwrite_acc_balance() -> None:
             file.close
         while True:
             try:
-                new_bal = float(input(f"The current balance is {data["checking_balance"]}. What would you like to change it to: "))
+                new_bal = float(input(f"The current balance is {data['checking_balance']}. What would you like to change it to: "))
                 if new_bal < 0:
                     raise Exception
                 break
@@ -648,7 +677,7 @@ def overwrite_cc_balance() -> None:
             file.close
         while True:
             try:
-                new_bal = float(input(f"The current balance is {data["cc_balance"]}. What would you like to change it to: "))
+                new_bal = float(input(f"The current balance is {data['cc_balance']}. What would you like to change it to: "))
                 if new_bal < 0:
                     raise Exception
                 break

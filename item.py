@@ -14,10 +14,13 @@ class Item:
 
     
     def get_exp(self):
-        return f"'{self.name}' | {self.category} | {self.amount} | {self.month}/{self.day}/{self.year} | {self.tru_exp} | {self.itm_type}"
+        return f"'{self.name}' | {self.category} | {self.amount:.2f} | {self.month}/{self.day}/{self.year} | {self.tru_exp} | {self.itm_type}"
     
     def get_dep(self):
-        return f"'{self.name}' | {self.amount} | {self.month}/{self.day}/{self.year} | {self.itm_type}"
+        return f"'{self.name}' | {self.amount:.2f} | {self.month}/{self.day}/{self.year} | {self.itm_type}"
 
     def get_expf(self):
-        return f"{self.month}/{self.day}/{self.year}       \t{self.category}       \t${self.amount}       \t{self.cd}       \t'{self.name}'       \t'{self.b_after}'"
+        if self.cd == 'c':
+            return f"{self.month}/{self.day}/{self.year}       \t{self.category}       \t${self.amount:.2f}       \tCredit       \t${self.b_after:.2f}    \t'{self.name}'"
+        if self.cd == 'd':
+            return f"{self.month}/{self.day}/{self.year}       \t{self.category}       \t${self.amount:.2f}       \tDebit       \t${self.b_after:.2f}    \t'{self.name}'"
