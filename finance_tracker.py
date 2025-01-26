@@ -49,9 +49,6 @@ total_exp = 0
 gnrl_exp = 0 
 grcry_exp = 0
 
-# First line formatting in csv:
-# total budget, misc budget, grocery budget, total spending this month, month number, date number, year number, c/d, true expense?, item type
-
 def flush_terminal() -> None:
     print("\n" * 500)
     if platform.system() == 'Windows':
@@ -576,7 +573,7 @@ def get_user_cc_payment() -> type[Item]:
             if inp == '':
                 pay_month = cur_month
             else:
-                dep_month = int(inp)
+                pay_month = int(inp)
 
             if pay_month not in range(1, 13):
                 raise Exception
@@ -594,7 +591,7 @@ def get_user_cc_payment() -> type[Item]:
             if inp == '':
                 pay_day = cur_day
             else:
-                dep_day = int(inp)
+                pay_day = int(inp)
 
             if pay_day not in range(1, 32):
                 raise Exception
