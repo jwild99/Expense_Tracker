@@ -1,5 +1,7 @@
 {
     "total_budget": 625,
     "general_budget": 500,
-    "grocery_budget": 125
+    "grocery_budget": 125,
+    "checking_balance": 6000,
+    "cc_balance": 0
 }

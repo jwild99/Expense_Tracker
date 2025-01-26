@@ -13,10 +13,10 @@ class Item:
 
     
     def get_exp(self):
-        return f"'{self.name}' | {self.category} | {self.amount} | {self.month}/{self.day}/{self.year} | {self.tru_exp} | {self.type}"
+        return f"'{self.name}' | {self.category} | {self.amount} | {self.month}/{self.day}/{self.year} | {self.tru_exp} | {self.itm_type}"
     
     def get_dep(self):
-        return f"'{self.name}' | {self.amount} | {self.month}/{self.day}/{self.year} | {self.type}"
+        return f"'{self.name}' | {self.amount} | {self.month}/{self.day}/{self.year} | {self.itm_type}"
 
     def get_expf(self):
         return f"{self.month}/{self.day}/{self.year}       \t{self.category}       \t${self.amount}       \t{self.cd}       \t'{self.name}'"

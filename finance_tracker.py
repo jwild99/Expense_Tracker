@@ -186,17 +186,17 @@ def get_user_expense() -> type[Item]:
 def get_user_deposit() -> type[Item]:
     flush_terminal()
 
-    dep_name = input("Enter expense name: ")
+    dep_name = input("Enter deposit name: ")
     flush_terminal()
 
     while True:
         try:
-            dep_amount = float(input("Enter expense amount: "))
+            dep_amount = float(input("Enter deposit amount: "))
             flush_terminal()
             break
         except Exception:
             flush_terminal()
-            print("\n\n~~ERROR~~\nInvalid expense amount entered! Please try again.\n\n")
+            print("\n\n~~ERROR~~\nInvalid deposit amount entered! Please try again.\n\n")
 
     while True:
         try:
@@ -251,10 +251,10 @@ def get_user_deposit() -> type[Item]:
             flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid year number entered. Please enter a value between 1 and 12.\n\n")
         
-    new_exp = Item(name=dep_name, category="misc", amount=dep_amount, month=dep_month, 
+    new_dep = Item(name=dep_name, category="Misc", amount=dep_amount, month=dep_month, 
                       day=dep_day, year=dep_year, cd='c', tru_exp="n", itm_type="DEP")
     flush_terminal()
-    return new_exp
+    return new_dep
 
 def save_expense(exp: Item) -> None:
     global most_recent_itm_path, menu_message
@@ -293,7 +293,7 @@ def get_all_expenses() -> dict:
             for line in lines:
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type = line.strip().split(',')
 
-                if tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp':
+                if tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp' and exp_name != "[CREDIT CARD PAYMENT]":
                     expense = Item(name=exp_name, category=exp_cat, 
                                 amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type)
 
@@ -320,7 +320,7 @@ def get_cur_expenses() -> list[Item]:
         for line in lines:
             exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type = line.strip().split(',')
 
-            if int(exp_month) == cur_month and int(exp_year) == cur_year and tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp':
+            if int(exp_month) == cur_month and int(exp_year) == cur_year and tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp' and exp_name != "[CREDIT CARD PAYMENT]":
                 expenses.append(Item(name=exp_name, category=exp_cat, amount=float(exp_amount), 
                                 month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type))
                     
@@ -358,12 +358,13 @@ def sum_expenses(expenses: list[Item]) -> None:
     total_exp, gnrl_exp, grcry_exp = 0, 0, 0
 
     for expense in expenses:
-        total_exp += expense.amount
+        if expense.name != "[CREDIT CARD PAYMENT]":
+            total_exp += expense.amount
 
-        if expense.category.lower() == "grocery":
-            grcry_exp += expense.amount
-        else:
-            gnrl_exp += expense.amount
+            if expense.category.lower() == "grocery":
+                grcry_exp += expense.amount
+            else:
+                gnrl_exp += expense.amount
 
 def get_daily_expenses(expenses: list[Item]) -> list[str]:
     daily_expenses = [[] for _ in range(31)]
@@ -556,6 +557,76 @@ def init() -> None:
 
     get_budgets()
 
+def get_user_cc_payment() -> type[Item]:
+    flush_terminal()
+
+    while True:
+        try:
+            pay_amount = float(input("Enter credit card payment amount: "))
+            flush_terminal()
+            break
+        except Exception:
+            flush_terminal()
+            print("\n\n~~ERROR~~\nInvalid payment amount entered! Please try again.\n\n")
+
+    while True:
+        try:
+            inp = input("Enter a month number [1-12]- leave blank for current month: ")
+
+            if inp == '':
+                pay_month = cur_month
+            else:
+                dep_month = int(inp)
+
+            if pay_month not in range(1, 13):
+                raise Exception
+            
+            flush_terminal()
+            break 
+        except Exception:
+            flush_terminal()
+            print(f"\n\n~~ERROR~~\nInvalid month number entered. Please enter a value between 1 and 12.\n\n")
+
+    while True:
+        try:
+            inp = input("Enter a day number [1-31]- leave blank for current day: ")
+
+            if inp == '':
+                pay_day = cur_day
+            else:
+                dep_day = int(inp)
+
+            if pay_day not in range(1, 32):
+                raise Exception
+            
+            flush_terminal()
+            break 
+        except Exception:
+            flush_terminal()
+            print(f"\n\n~~ERROR~~\nInvalid date number entered. Please enter a value between 1 and 31.\n\n")
+
+    while True:
+        try:
+            inp = input("Enter a year number- leave blank for current year: ")
+
+            if inp == '':
+                pay_year = cur_year
+            else:
+                pay_year = int(inp)
+
+            if pay_year < 1:
+                raise Exception
+            
+            break 
+        except Exception:
+            flush_terminal()
+            print(f"\n\n~~ERROR~~\nInvalid year number entered. Please enter a value between 1 and 12.\n\n")
+        
+    new_pay = Item(name=f"[CREDIT CARD PAYMENT]", category="Misc", amount=pay_amount, month=pay_month, 
+                      day=pay_day, year=pay_year, cd='d', tru_exp="y", itm_type="EXP")
+    flush_terminal()
+    return new_pay
+
 # Menu loop where options can be selected from
 def cli_loop() -> None:
     global menu_message
@@ -590,10 +661,13 @@ def cli_loop() -> None:
             menu_message = ""
             dep = get_user_deposit()
             save_deposit(dep)
-            # get_deposit(), save_deposit
         elif action == 'h':
             menu_message = ""
             help()
+        elif action == 'c':
+            menu_message = ""
+            pay = get_user_cc_payment()
+            save_expense(pay)
 
 # Runs the main program
 def main() -> None:
