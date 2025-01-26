@@ -9,7 +9,7 @@ from item import Item
 exp_categories = [
     "Food",
     "Home",
-    "Laundry"
+    "Laundry",
     "Grocery",
     "Work",
     "Travel",
