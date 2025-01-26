@@ -389,6 +389,14 @@ def print_daily_expenses(daily_expenses: list[Item]) -> None:
             for exp in daily_expenses[i]:
                 print(exp)
 
+def print_balances() -> None:
+    with open(info_file_path, 'r') as file:
+        data = json.load(file)
+        print(f"Checking Account Balance: {data['checking_balance']}")
+        print(f"Credit Card Balance: {data['cc_balance']}")
+
+        file.close()
+
 def get_menu_summary() -> None:
     flush_terminal()
 
@@ -400,6 +408,8 @@ def get_menu_summary() -> None:
     if len(menu_message) > 0:
         print(menu_message)
     print("-"*60)
+
+    print_balances()
     print()
 
     if len(expenses) > 0:
