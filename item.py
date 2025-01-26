@@ -21,6 +21,6 @@ class Item:
 
     def get_expf(self):
         if self.cd == 'c':
-            return f"{self.month}/{self.day}/{self.year}       \t{self.category}       \t${self.amount:.2f}       \tCredit       \t${self.b_after:.2f}    \t'{self.name}'"
+            return f"{self.month}/{self.day}/{self.year}        \t{self.category}       \t${self.amount:.2f}       \tCredit       \t${self.b_after:.2f}    \t'{self.name}'"
         if self.cd == 'd':
-            return f"{self.month}/{self.day}/{self.year}       \t{self.category}       \t${self.amount:.2f}       \tDebit       \t${self.b_after:.2f}    \t'{self.name}'"
+            return f"{self.month}/{self.day}/{self.year}        \t{self.category}       \t${self.amount:.2f}       \tDebit       \t${self.b_after:.2f}    \t'{self.name}'"

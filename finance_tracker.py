@@ -196,7 +196,7 @@ def get_user_expense() -> type[Item]:
 
     flush_terminal()
 
-    exp_name = input("Enter expense name: ")
+    exp_name = input("Enter expense name (NO COMMAS): ")
     flush_terminal()
 
     exp_amount = get_user_amount()
@@ -387,9 +387,9 @@ def print_amount_by_cat(amount_by_cat: dict) -> None:
     for key, amount in amount_by_cat.items():
         percentage = (amount / total_budget) * 100
         if key.strip().lower() == "grocery":
-            print(f"    {key}:   \t${amount:.2f}       {percentage:.2f}% \t -want-> 20%") 
+            print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}% \t -want-> 20%") 
         else:
-            print(f"    {key}:   \t${amount:.2f}       {percentage:.2f}%")
+            print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}%")
 
 def print_remaining_budget() -> None:
     global total_budget, total_exp, gnrl_budget, gnrl_exp, grcry_budget, grcry_exp
@@ -401,8 +401,8 @@ def print_remaining_budget() -> None:
 def print_daily_expenses(daily_expenses: list[Item]) -> None:
     print("Date \t\t\tCategory \tAmount \t\tCard Type \tBalance After   Name\n")
     for i in range(len(daily_expenses)):
-            for exp in daily_expenses[i]:
-                print(exp)
+        for exp in daily_expenses[i]:
+            print(exp)
 
 def print_balances() -> None:
     with open(info_file_path, 'r') as file:
@@ -494,16 +494,16 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
         gnrl_diff = "0"
 
     if grcry_exp < grcry_budget:
-        grcy_diff = f"+{total_budget - grcry_exp:.2f}"
+        grcy_diff = f"+{grcry_budget - grcry_exp:.2f}"
     elif grcry_exp > grcry_budget:
         grcy_diff = f"{grcry_budget - grcry_exp:.2f}"
     else:
         grcy_diff = "0"
 
 
-    print(f"\n\n${total_exp:.2f} \tof ${total_budget:.2f} total   budget in {months[months_index]}, {year} \t[{total_diff}]")
-    print(f"${gnrl_exp:.2f} \tof ${gnrl_budget:.2f} general budget in {months[months_index]}, {year} \t[{gnrl_diff}]")
-    print(f"${grcry_exp:.2f} \tof ${grcry_budget:.2f} grocery budget in {months[months_index]}, {year} \t[{grcy_diff}]")
+    print(f"\n\n${total_exp:.2f}  \tof ${total_budget:.2f} total   budget in {months[months_index]}, {year} \t[{total_diff}]")
+    print(f"${gnrl_exp:.2f}  \tof ${gnrl_budget:.2f} general budget in {months[months_index]}, {year} \t[{gnrl_diff}]")
+    print(f"${grcry_exp:.2f}  \tof ${grcry_budget:.2f} grocery budget in {months[months_index]}, {year} \t[{grcy_diff}]")
     
     if reached_current:
         print("\n")
