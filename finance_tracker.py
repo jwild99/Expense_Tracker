@@ -754,8 +754,6 @@ def undo_last_expense() -> None:
 
         menu_message = f"Removed {item.get_dep()} from {most_recent_itm_path}"
 
-        
-
 def overwrite_acc_balance() -> None:
     """ Overwrites the stored account balance. Checks for confirmation first as 
     this is an irreversible action. Writes a new, blank expense to the CSV to 
@@ -855,7 +853,40 @@ def init() -> None:
     with open(f"records/records{cur_year}.csv", 'a') as file:
         pass
 
+    init_json()
+
     get_budgets()
+
+def init_json() -> None:
+    file_name = 'info.json'
+
+    if not os.path.exists(file_name):
+        flush_terminal()
+        print("info.json file not found. Creating a new one")
+
+        data = {
+            "total_budget": 0.0,
+            "general_budget": 0.0,
+            "grocery_budget": 0.0,
+            "checking_balance": 0.0,
+            "cc_balance": 0.0
+        }
+
+        data['total_budget'] = float(input("Enter total budget: "))
+        flush_terminal()
+        data['general_budget'] = float(input("Enter general budget: "))
+        flush_terminal()
+        data['grocery_budget'] = float(input("Enter grocery budget: "))
+        flush_terminal()
+        data['checking_balance'] = float(input("Enter checking balance: "))
+        flush_terminal()
+        data['cc_balance'] = float(input("Enter credit card balance: "))
+        flush_terminal()
+
+        with open(file_name, 'w') as f:
+            json.dump(data, f, indent=4)
+
+        print(f"{file_name} created successfully with new data.")
 
 def get_menu_summary() -> None:
     """ Gets and displays the main menu summary which includes expenses 
