@@ -1,8 +1,8 @@
-import os 
+import os
 import platform
 import datetime
 import sys
-import json 
+import json
 
 from item import Item
 
@@ -46,7 +46,7 @@ gnrl_budget = 0
 grcry_budget = 0
 
 total_exp = 0
-gnrl_exp = 0 
+gnrl_exp = 0
 grcry_exp = 0
 
 acc_blnce = 0
@@ -62,9 +62,9 @@ def flush_terminal() -> None:
 
     print("\n" * 500)
     if platform.system() == 'Windows':
-        os.system('cls')  
+        os.system('cls')
     else:
-        os.system('clear') 
+        os.system('clear')
     sys.stdout.flush()
 
 def close() -> None:
@@ -93,7 +93,7 @@ def get_user_category() -> int:
         print("Select a category:")
         for i, category_name in enumerate(exp_categories):
             print(f"    {i + 1}. {category_name}")
-        
+
         val_range = f"[1 - {len(exp_categories)}]"
 
         try:
@@ -101,7 +101,7 @@ def get_user_category() -> int:
 
             if cat_num not in range(0, len(exp_categories)):
                 raise Exception
-            
+
             flush_terminal()
             break
         except Exception:
@@ -124,7 +124,7 @@ def get_user_day(month: int) -> int:
 
             if day not in range(1, 32):
                 raise Exception
-            
+
             # February cannot have more than 29 days
             if month == 2 and day > 29:
                 raise Exception
@@ -132,9 +132,9 @@ def get_user_day(month: int) -> int:
             if month in {4, 6, 9, 11} and month > 30:
                 raise Exception
 
-            
+
             flush_terminal()
-            break 
+            break
         except Exception:
             flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid date number entered. Please enter a value between 1 and 31 and make sure the value is valid for the month.\n\n")
@@ -155,12 +155,12 @@ def get_user_month() -> int:
 
             if month not in range(1, 13):
                 raise Exception
-            
+
             flush_terminal()
-            break 
+            break
         except Exception:
             flush_terminal()
-            print(f"\n\n~~ERROR~~\nInvalid month number entered. Please enter a value between 1 and 12.\n\n") 
+            print(f"\n\n~~ERROR~~\nInvalid month number entered. Please enter a value between 1 and 12.\n\n")
 
     return month
 
@@ -178,12 +178,12 @@ def get_user_year() -> int:
 
             if year < 1:
                 raise Exception
-            
+
             flush_terminal()
-            break 
+            break
         except Exception:
             flush_terminal()
-            print(f"\n\n~~ERROR~~\nInvalid year number entered. Please enter a value between 1 and 12.\n\n") 
+            print(f"\n\n~~ERROR~~\nInvalid year number entered. Please enter a value between 1 and 12.\n\n")
 
     return year
 
@@ -210,36 +210,14 @@ def get_user_cd() -> str:
 
             if cd != 'c' and cd != 'd':
                 raise Exception
-            
+
             flush_terminal()
-            break 
+            break
         except Exception:
             flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid credit/debit value entered. Please enter either 'c' or 'd'.\n\n")
 
     return cd
-
-def get_user_true_exp() -> str:
-    """ Gets user input for whether or not the expense is a 'true expense' meaning 
-    that the user will not be reimbursed for it """
-
-    while True:
-        try:
-            tru_exp = input("Is this a 'true expense'? [y/n] (leave blank for 'y'): ").strip().lower()
-
-            if tru_exp == '':
-                tru_exp = 'y'
-
-            if tru_exp != 'y' and tru_exp != 'n':
-                raise Exception
-            
-            flush_terminal()
-            break 
-        except Exception:
-            flush_terminal()
-            print(f"\n\n~~ERROR~~\nInvalid 'true expense' value entered. Please enter either 'y' or 'n'.\n\n")
-
-    return tru_exp
 
 def get_user_name() -> str:
     """ Gets a new item name from the user and ensures it is valid with no commas """
@@ -252,7 +230,7 @@ def get_user_name() -> str:
                 raise Exception
 
             flush_terminal()
-            break 
+            break
         except Exception:
             flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid name value entered. Make sure there are no commas!\n\n")
@@ -273,47 +251,11 @@ def get_user_expense() -> type[Item]:
     exp_day = get_user_day(month=exp_month)
     exp_year = get_user_year()
     exp_cd = get_user_cd()
-    tru_exp = get_user_true_exp()
 
-    if exp_cd.strip().lower() == 'd':
-        exp_b_after = acc_blnce - exp_amount
-    else:
-        exp_b_after = acc_blnce
-
-    new_exp = Item(name=exp_name, category=exp_categories[cat_num], amount=exp_amount, month=exp_month, 
-                      day=exp_day, year=exp_year, cd=exp_cd, tru_exp=tru_exp, itm_type="EXP", b_after=exp_b_after)
+    new_exp = Item(name=exp_name, category=exp_categories[cat_num], amount=exp_amount, month=exp_month,
+                      day=exp_day, year=exp_year, cd=exp_cd)
     flush_terminal()
     return new_exp
-
-def get_user_deposit() -> type[Item]:
-    """ Collects from user the necessary info to create a new deposit and creates one """
-
-    flush_terminal()
-    dep_name = get_user_name()
-    dep_amount = get_user_amount()
-    dep_month = get_user_month()
-    dep_day = get_user_day(month=dep_month)
-    dep_year = get_user_year()
-    dep_b_after = acc_blnce + dep_amount
-        
-    new_dep = Item(name=dep_name, category="Misc", amount=dep_amount, month=dep_month, 
-                      day=dep_day, year=dep_year, cd='d', tru_exp="n", itm_type="DEP", b_after=dep_b_after)
-    flush_terminal()
-    return new_dep
-
-def get_user_cc_payment() -> type[Item]:
-    """ Collects info needed to create a new Payment type expense from the user and creates one """
-
-    flush_terminal()
-    pay_amount = get_user_amount()
-    pay_month = get_user_month()
-    pay_day = get_user_day(month=pay_month)
-    pay_year = get_user_year()
-    pay_b_after = acc_blnce - pay_amount
-    new_pay = Item(name=f"[CREDIT CARD PAYMENT]", category="Misc", amount=pay_amount, month=pay_month, 
-                      day=pay_day, year=pay_year, cd='d', tru_exp="y", itm_type="EXP", b_after=pay_b_after)
-    flush_terminal()
-    return new_pay
 
 # WRITING TO CSV
 ################################################################################################################################
@@ -327,68 +269,13 @@ def save_expense(exp: Item) -> None:
     most_recent_itm_path = f"records/records{exp.year}.csv"
 
     with open(exp_file_path, 'a') as file:
-        file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.cd},{exp.tru_exp},{exp.itm_type},{exp.b_after}\n")
-
+        file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.cd}\n")
         file.close()
-
-    update_balances(exp)
 
     menu_message = f"Saved expense: [{exp.get_exp()}] to {exp_file_path}"
 
-def save_deposit(dep: Item) -> None:
-    """ Saves a new deposit to the correct CSV. Also stored the most recent file path """
-
-    global most_recent_itm_path, menu_message
-
-    dep_file_path = f"records/records{dep.year}.csv"
-    most_recent_itm_path = f"records/records{dep.year}.csv"
-
-    with open(dep_file_path, "a") as file:
-        file.write(f"{dep.name},{dep.category},{dep.amount},{dep.month},{dep.day},{dep.year},{dep.cd},{dep.tru_exp},{dep.itm_type},{dep.b_after}\n")
-
-        file.close()
-
-    update_balances(dep)
-
-    menu_message = f"Saved deposit: [{dep.get_dep()}] to {dep_file_path}"
-
 # WRITING TO OR READING FROM INFO.JSON
 ################################################################################################################################
-
-def update_balances(itm: Item) -> None:
-    """ Updates the account and credit card balances as expenses, deposits, and CC payments are entered """
-
-    global recent_acc_blnce, recent_cc_blnce
-
-    with open(info_file_path, 'r') as file:
-        data = json.load(file)
-        file.close
-
-    # item is an expense to debit card/checking account
-    if itm.itm_type.strip().lower() == "exp" and itm.cd.strip().lower() == 'd' and itm.name != "[CREDIT CARD PAYMENT]":
-        recent_acc_blnce = data["checking_balance"]
-        data["checking_balance"] -= itm.amount
-
-    # item is a deposit to debit card/checking account
-    elif itm.itm_type.strip().lower() == "dep" and itm.cd.strip().lower() == 'd' and itm.name != "[CREDIT CARD PAYMENT]":
-        recent_acc_blnce = data["checking_balance"]
-        data["checking_balance"] += itm.amount
-
-    # item is an expense to credit card/credit card balance
-    elif itm.itm_type.strip().lower() == "exp" and itm.cd.strip().lower() == 'c' and itm.name != "[CREDIT CARD PAYMENT]":
-        recent_cc_blnce = data["cc_balance"]
-        data["cc_balance"] += itm.amount
-
-    # item is an expense to checking account specifically a credit card payment
-    elif itm.itm_type.strip().lower() == "exp" and itm.cd.strip().lower() == 'd' and itm.name == "[CREDIT CARD PAYMENT]":
-        recent_cc_blnce = data["cc_balance"]
-        recent_acc_blnce = data["checking_balance"]
-        data["cc_balance"] -= itm.amount
-        data["checking_balance"] -= itm.amount
-
-    with open(info_file_path, "w") as file:
-        json.dump(data, file, indent=4)
-        file.close()
 
 def get_budgets() -> None:
     """ Reads in the budget values from info.json and stores them as global variables """
@@ -404,48 +291,34 @@ def get_budgets() -> None:
 
         file.close()
 
-def set_acc_blnce() -> None:
-    """ Sets a global variable to whatever the currently stored account balance value is- for processing purposes """
-
-    global acc_blnce
-
-    with open(info_file_path, 'r') as file:
-        data = json.load(file)
-        acc_blnce = data["checking_balance"]
-        file.close()
-
 # READING ITEMS FROM CSVs
 ################################################################################################################################
 
 def get_all_expenses() -> dict:
-    """ Iterates through the directory containing the CSVs and gets a dictionary of all expenses 
-    for each year. Each dictionary entry contains its own list of size 12 for 
-    each month. Any given expense will be sorted into the proepr 
-    dictionary bucket based on year, and then places 
-    into the correct list within that bucket 
+    """ Iterates through the directory containing the CSVs and gets a dictionary of all expenses
+    for each year. Each dictionary entry contains its own list of size 12 for
+    each month. Any given expense will be sorted into the proepr
+    dictionary bucket based on year, and then places
+    into the correct list within that bucket
     based on month of occurance """
 
     exp_file_dir = f"records/"
     expenses_dict = {}
-    
+
     for filepath in os.listdir(exp_file_dir):
         with open(f"records/{filepath}", 'r') as file:
             lines = file.readlines()
 
             for line in lines:
-                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type, b_after = line.strip().split(',')
-
-                if tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp' and exp_name != "[CREDIT CARD PAYMENT]":
-                    expense = Item(name=exp_name, category=exp_cat, 
-                                amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type, b_after=float(b_after))
-
-                    if expense.year in expenses_dict:
+                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd = line.strip().split(',')
+                expense = Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd)
+                if expense.year in expenses_dict:
                         expenses_dict[expense.year][int(exp_month) - 1].append(expense)
-                    else:
+                else:
                         expenses_dict[expense.year] = [[] for _ in range(12)]
                         expenses_dict[expense.year][int(exp_month) - 1].append(expense)
 
-            file.close() 
+            file.close()
 
     return expenses_dict
 
@@ -462,14 +335,12 @@ def get_cur_expenses() -> list[Item]:
         lines = file.readlines()
 
         for line in lines:
-            exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd, tru_exp, itm_type, b_after = line.strip().split(',')
+                exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd = line.strip().split(',')
 
-            if int(exp_month) == cur_month and int(exp_year) == cur_year and tru_exp.strip().lower() == 'y' and itm_type.strip().lower() == 'exp' and exp_name != "[CREDIT CARD PAYMENT]":
-                expenses.append(Item(name=exp_name, category=exp_cat, amount=float(exp_amount), 
-                                month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd, tru_exp=tru_exp, itm_type=itm_type, b_after=float(b_after)))
-                    
+                expenses.append(Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd))
+
         file.close()
-                    
+
     return expenses
 
 # PROCESSING ITEMS FROM CSVs
@@ -509,7 +380,7 @@ def get_daily_expenses(expenses: list[Item]) -> list[str]:
     """ Gets a list of daily expenses in a formatted string """
 
     daily_expenses = [[] for _ in range(31)]
-    
+
     for expense in expenses:
         daily_expenses[expense.day - 1].append(expense.get_expf())
 
@@ -525,7 +396,7 @@ def print_amount_by_cat(amount_by_cat: dict) -> None:
     for key, amount in amount_by_cat.items():
         percentage = (amount / total_budget) * 100
         if key.strip().lower() == "grocery":
-            print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}% \t -want-> 20%") 
+            print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}% \t -want-> 20%")
         else:
             print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}%")
 
@@ -544,16 +415,6 @@ def print_daily_expenses(daily_expenses: list[Item]) -> None:
         for exp in daily_expenses[i]:
             print(exp)
 
-def print_balances() -> None:
-    """ Reads in the current account and credit card balances and displays them """
-
-    with open(info_file_path, 'r') as file:
-        data = json.load(file)
-        print(f"Checking Account Balance: {data['checking_balance']}")
-        print(f"Credit Card Balance: {data['cc_balance']}")
-
-        file.close()
-
 def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int, reached_current: bool) -> None:
     """ Displays a summary of the given month to the console """
 
@@ -563,7 +424,7 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
     amount_by_cat = get_amount_by_cat(expenses)
     daily_expenses = get_daily_expenses(expenses)
     sum_expenses(expenses)
-    
+
     if reached_current:
         print(f"Summary for {months[months_index]}, {year} (current month)")
         print("-"*60)
@@ -603,7 +464,7 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
     print(f"\n\n${total_exp:.2f}  \tof ${total_budget:.2f} total   budget in {months[months_index]}, {year} \t[{total_diff}]")
     print(f"${gnrl_exp:.2f}  \tof ${gnrl_budget:.2f} general budget in {months[months_index]}, {year} \t[{gnrl_diff}]")
     print(f"${grcry_exp:.2f}  \tof ${grcry_budget:.2f} grocery budget in {months[months_index]}, {year} \t[{grcy_diff}]")
-    
+
     if reached_current:
         print("\n")
     else:
@@ -644,7 +505,7 @@ def get_alltime_summary() -> None:
     cur_month_index = cur_month - 1
 
     flush_terminal()
-    
+
     if len(expenses) > 0:
         for year_key in sorted(expenses.keys()):
             months_index = 0
@@ -683,11 +544,7 @@ def help() -> None:
     print("\nCommand List:")
     print("'x'     | quit or go back")
     print("'e'     | add a new expense")
-    print("'d'     | add a new deposit")
-    print("'c'     | add a new credit card payment")
     print("'u'     | undo most recently added expense or deposit")
-    print("'o -ab' | overwrite currently stored account balance")
-    print("'o -cb' | overwrite currently stored credit card balance")
     print("'s'     | full expense summary of current month")
     print("'s -a'  | all-time monthly summary of expenses")
 
@@ -710,7 +567,7 @@ def undo_last_expense() -> None:
     if len(most_recent_itm_path) <= 0:
         menu_message = "~~Nothing to undo!~~"
         return
-    
+
     flush_terminal()
     message = "~~WARNING~~\nAre you sure you wish to undo the most recent CSV write?\nThis cannot be undone! [y/n]: "
     con = None
@@ -725,123 +582,27 @@ def undo_last_expense() -> None:
 
     if con:
         with open(most_recent_itm_path, 'r') as file:
-            lines = file.readlines()  
+            lines = file.readlines()
             file.close()
 
-        if lines:  
+        if lines:
             last_line = lines[len(lines) - 1]
-            lines = lines[:-1]  
+            lines = lines[:-1]
 
-            itm_name, itm_cat, itm_amount, itm_month, itm_day, itm_year, itm_cd, itm_tru_exp, itm_type, b_after = last_line.strip().split(',')
-            item = Item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), 
-                        year=int(itm_year), cd=itm_cd, tru_exp=itm_tru_exp, itm_type=itm_type, b_after=float(b_after))
+            itm_name, itm_cat, itm_amount, itm_month, itm_day, itm_year, itm_cd = last_line.strip().split(',')
+            item = Item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), year=int(itm_year), cd=itm_cd)
 
             with open(most_recent_itm_path, 'w') as file:
-                file.writelines(lines) 
+                file.writelines(lines)
                 file.close()
-        
-        # Make updates to balances to reflect undo
-        with open(info_file_path, 'r') as file:
-            data = json.load(file)
-            if itm_cd.strip().lower() == 'd':
-                data["checking_balance"] = recent_acc_blnce
-            elif itm_cd.strip().lower() == 'c':
-                data["cc_balance"] = recent_cc_blnce
-            file.close
-
-        with open(info_file_path, "w") as file:
-            json.dump(data, file, indent=4)
 
         menu_message = f"Removed {item.get_dep()} from {most_recent_itm_path}"
-
-def overwrite_acc_balance() -> None:
-    """ Overwrites the stored account balance. Checks for confirmation first as 
-    this is an irreversible action. Writes a new, blank expense to the CSV to 
-    indicate that the balance was updated- for all-time summary purposes """
-
-    global menu_message
-
-    flush_terminal()
-    message = "~~WARNING~~\nAre you sure you wish to overwrite the stored account balance?\nThis cannot be undone! [y/n]: "
-    con = None
-    while True:
-        inp = input(message).strip().lower()
-        if inp == 'y':
-            con = True
-            break
-        elif inp == 'n':
-            con = False
-            break
-
-    if con:
-        with open(info_file_path, 'r') as file:
-            data = json.load(file)
-            old_bal = data["checking_balance"]
-            file.close
-
-        while True:
-            try:
-                new_bal = float(input(f"The current balance is {data['checking_balance']}. What would you like to change it to: "))
-                if new_bal < 0:
-                    raise Exception
-                break
-            except Exception:
-                flush_terminal()
-                print("Invalid balance amount entered! Please try again.")
-
-        data["checking_balance"] = new_bal
-        fix_exp = Item(name=f"FIXED ACC BALANCE (NOT REAL EXPENSE)", category="Misc", amount=0, month=cur_month, 
-                      day=cur_day, year=cur_year, cd='d', tru_exp="y", itm_type="EXP", b_after=new_bal)
-        save_expense(fix_exp)
-
-        with open(info_file_path, "w") as file:
-            json.dump(data, file, indent=4)
-        menu_message = f"Changed account balance from {old_bal} to {new_bal}."
-        
-def overwrite_cc_balance() -> None:
-    """ Allows the user to overwrite the stored credit card balance. Checks for confirmation 
-    before doing so since this is an irreversible action"""
-
-    global menu_message
-
-    flush_terminal()
-    message = "~~WARNING~~\nAre you sure you wish to overwrite the stored credit card balance?\nThis cannot be undone! [y/n]: "
-    con = None
-    while True:
-        inp = input(message).strip().lower()
-        if inp == 'y':
-            con = True
-            break
-        elif inp == 'n':
-            con = False
-            break
-
-    if con:
-        with open(info_file_path, 'r') as file:
-            data = json.load(file)
-            old_bal = data["cc_balance"]
-            file.close
-
-        while True:
-            try:
-                new_bal = float(input(f"The current balance is {data['cc_balance']}. What would you like to change it to: "))
-                if new_bal < 0:
-                    raise Exception
-                break
-            except Exception:
-                flush_terminal()
-                print("Invalid balance amount entered! Please try again.")
-
-        data["cc_balance"] = new_bal
-        with open(info_file_path, "w") as file:
-            json.dump(data, file, indent=4)
-        menu_message = f"Changed credit card balance from {old_bal} to {new_bal}."
 
 # CLI UTILS AND MAIN MENU LOOP
 ################################################################################################################################
 
 def init() -> None:
-    """ Initializes current data and makes sure there is a csv file created for the current year. 
+    """ Initializes current data and makes sure there is a csv file created for the current year.
     Also gets the current budgets from info.json """
 
     global cur_month, cur_day, cur_year
@@ -868,8 +629,6 @@ def init_json() -> None:
             "total_budget": 0.0,
             "general_budget": 0.0,
             "grocery_budget": 0.0,
-            "checking_balance": 0.0,
-            "cc_balance": 0.0
         }
 
         data['total_budget'] = float(input("Enter total budget: "))
@@ -878,10 +637,6 @@ def init_json() -> None:
         flush_terminal()
         data['grocery_budget'] = float(input("Enter grocery budget: "))
         flush_terminal()
-        data['checking_balance'] = float(input("Enter checking balance: "))
-        flush_terminal()
-        data['cc_balance'] = float(input("Enter credit card balance: "))
-        flush_terminal()
 
         with open(file_name, 'w') as f:
             json.dump(data, f, indent=4)
@@ -889,7 +644,7 @@ def init_json() -> None:
         print(f"{file_name} created successfully with new data.")
 
 def get_menu_summary() -> None:
-    """ Gets and displays the main menu summary which includes expenses 
+    """ Gets and displays the main menu summary which includes expenses
     by category, account balances, and remaining budget """
 
     flush_terminal()
@@ -901,8 +656,6 @@ def get_menu_summary() -> None:
     if len(menu_message) > 0:
         print(menu_message)
     lines(60)
-
-    print_balances()
     spacing(1)
 
     if len(expenses) > 0:
@@ -910,7 +663,7 @@ def get_menu_summary() -> None:
     else:
         print("No expenses to show at this time.")
 
-    print_remaining_budget() 
+    print_remaining_budget()
 
 def get_user_action() -> None:
     """ Gets user input for an action and then dispatches correct code for that action """
@@ -933,32 +686,17 @@ def get_user_action() -> None:
     elif action == "s -a":
         menu_message = ""
         get_alltime_summary()
-    elif action == 'd':
-        menu_message = ""
-        dep = get_user_deposit()
-        save_deposit(dep)
     elif action == 'h':
         menu_message = ""
         help()
-    elif action == 'c':
-        menu_message = ""
-        pay = get_user_cc_payment()
-        save_expense(pay)
-    elif action == "o -ab":
-        menu_message = ""
-        overwrite_acc_balance()
-    elif action == "o -cb":
-        menu_message = ""
-        overwrite_cc_balance()
 
 def cli_loop() -> None:
     """ Loop that runs until user quits- displays main menu and gets user actions """
 
     while True:
         flush_terminal()
-        set_acc_blnce()
         get_menu_summary()
-        get_user_action()   
+        get_user_action()
 
 # EXECUTION
 ################################################################################################################################
