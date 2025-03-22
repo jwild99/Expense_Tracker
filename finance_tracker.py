@@ -9,6 +9,7 @@ from item import Item
 exp_categories = [
     "Food",
     "Home",
+    "Clothes",
     "Laundry",
     "Grocery",
     "Work",
@@ -403,14 +404,14 @@ def print_amount_by_cat(amount_by_cat: dict) -> None:
 def print_remaining_budget() -> None:
     """ Displays the remaining amount of each budget type"""
 
-    print(f"\n${total_budget - total_exp:.2f} \tof total budget remaining   \t[${total_budget:.2f}]")
-    print(f"${gnrl_budget - gnrl_exp:.2f} \tof general budget remaining \t[${gnrl_budget:.2f}]")
-    print(f"${grcry_budget - grcry_exp:.2f} \tof grocery budget remaining \t[${grcry_budget:.2f}]")
+    print(f"\n${total_budget - total_exp:.2f}    \tof total budget remaining   \t[${total_budget:.2f}]")
+    print(f"${gnrl_budget - gnrl_exp:.2f}    \tof general budget remaining \t[${gnrl_budget:.2f}]")
+    print(f"${grcry_budget - grcry_exp:.2f}    \tof grocery budget remaining \t[${grcry_budget:.2f}]")
 
 def print_daily_expenses(daily_expenses: list[Item]) -> None:
     """ Displays a day-by-day summary of expenses """
 
-    print("Date \t\t\tCategory \tAmount \t\tCard Type \tBalance After   Name\n")
+    print("Date \t\t\tCategory \tAmount \t\tCard Type \tName\n")
     for i in range(len(daily_expenses)):
         for exp in daily_expenses[i]:
             print(exp)
