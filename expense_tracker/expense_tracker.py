@@ -1,10 +1,8 @@
-import os
-import platform
-import datetime
-import sys
 import json
-
-from item import Item
+from expense_tracker.item_class import Item
+from utils import terminal_utils as tUtils
+import os
+from const import time_const as time
 
 exp_categories = [
     "Food",
@@ -18,20 +16,6 @@ exp_categories = [
     "Misc"
 ]
 
-months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-]
 
 info_file_path = "info.json"
 most_recent_itm_path = ""
@@ -41,6 +25,8 @@ menu_message = ""
 cur_month = 0
 cur_day = 0
 cur_year = 0
+
+
 
 total_budget = 0
 gnrl_budget = 0
@@ -58,31 +44,7 @@ recent_cc_blnce = 0
 # TERMINAL UTILS
 ################################################################################################################################
 
-def flush_terminal() -> None:
-    """ Flushes print buffers and clears the terminal """
 
-    print("\n" * 500)
-    if platform.system() == 'Windows':
-        os.system('cls')
-    else:
-        os.system('clear')
-    sys.stdout.flush()
-
-def close() -> None:
-    """ Closes the app """
-
-    flush_terminal()
-    exit()
-
-def spacing(lines) -> None:
-    """ Prints spacing the given number of times """
-
-    print("\n" * (lines - 1))
-
-def lines(num) -> None:
-        """ Prints a '-' character the given number of times """
-
-        print("-"*num)
 
 # USER INPUT UTILS
 ################################################################################################################################
@@ -103,10 +65,10 @@ def get_user_category() -> int:
             if cat_num not in range(0, len(exp_categories)):
                 raise Exception
 
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid category number entered. Please enter a value between 1 and {len(exp_categories)}.\n\n")
 
     return cat_num
@@ -134,10 +96,10 @@ def get_user_day(month: int) -> int:
                 raise Exception
 
 
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid date number entered. Please enter a value between 1 and 31 and make sure the value is valid for the month.\n\n")
 
     return day
@@ -157,10 +119,10 @@ def get_user_month() -> int:
             if month not in range(1, 13):
                 raise Exception
 
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid month number entered. Please enter a value between 1 and 12.\n\n")
 
     return month
@@ -180,10 +142,10 @@ def get_user_year() -> int:
             if year < 1:
                 raise Exception
 
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid year number entered. Please enter a value between 1 and 12.\n\n")
 
     return year
@@ -194,10 +156,10 @@ def get_user_amount() -> float:
     while True:
         try:
             amount = float(input("Enter amount: "))
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print("\n\n~~ERROR~~\nInvalid expense amount entered! Please try again.\n\n")
 
     return amount
@@ -212,10 +174,10 @@ def get_user_cd() -> str:
             if cd != 'c' and cd != 'd':
                 raise Exception
 
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid credit/debit value entered. Please enter either 'c' or 'd'.\n\n")
 
     return cd
@@ -230,10 +192,10 @@ def get_user_name() -> str:
             if name.find(",") != -1:
                 raise Exception
 
-            flush_terminal()
+            tUtils.flush_terminal()
             break
         except Exception:
-            flush_terminal()
+            tUtils.flush_terminal()
             print(f"\n\n~~ERROR~~\nInvalid name value entered. Make sure there are no commas!\n\n")
 
     return name
@@ -244,7 +206,7 @@ def get_user_name() -> str:
 def get_user_expense() -> type[Item]:
     """ Collects from the user the necessary info to create a new expense and creates one """
 
-    flush_terminal()
+    tUtils.flush_terminal()
     exp_name = get_user_name()
     exp_amount = get_user_amount()
     cat_num = get_user_category()
@@ -253,15 +215,15 @@ def get_user_expense() -> type[Item]:
     exp_year = get_user_year()
     exp_cd = get_user_cd()
 
-    new_exp = Item(name=exp_name, category=exp_categories[cat_num], amount=exp_amount, month=exp_month,
+    new_exp =Item(name=exp_name, category=exp_categories[cat_num], amount=exp_amount, month=exp_month,
                       day=exp_day, year=exp_year, cd=exp_cd)
-    flush_terminal()
+    tUtils.flush_terminal()
     return new_exp
 
 # WRITING TO CSV
 ################################################################################################################################
 
-def save_expense(exp: Item) -> None:
+def save_expense(exp:Item) -> None:
     """ Saves a new expense to the correct CSV. Also stores the most recent file path """
 
     global most_recent_itm_path, menu_message
@@ -312,7 +274,7 @@ def get_all_expenses() -> dict:
 
             for line in lines:
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd = line.strip().split(',')
-                expense = Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd)
+                expense =Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd)
                 if expense.year in expenses_dict:
                         expenses_dict[expense.year][int(exp_month) - 1].append(expense)
                 else:
@@ -427,10 +389,10 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
     sum_expenses(expenses)
 
     if reached_current:
-        print(f"Summary for {months[months_index]}, {year} (current month)")
+        print(f"Summary for {time.months[months_index]}, {year} (current month)")
         print("-"*60)
     else:
-        print(f"Summary for {months[months_index]}, {year}")
+        print(f"Summary for {time.months[months_index]}, {year}")
         print("-"*60)
 
     if len(expenses) > 0:
@@ -462,9 +424,9 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
         grcy_diff = "0"
 
 
-    print(f"\n\n${total_exp:.2f}  \tof ${total_budget:.2f} total   budget in {months[months_index]}, {year} \t[{total_diff}]")
-    print(f"${gnrl_exp:.2f}  \tof ${gnrl_budget:.2f} general budget in {months[months_index]}, {year} \t[{gnrl_diff}]")
-    print(f"${grcry_exp:.2f}  \tof ${grcry_budget:.2f} grocery budget in {months[months_index]}, {year} \t[{grcy_diff}]")
+    print(f"\n\n${total_exp:.2f}  \tof ${total_budget:.2f} total   budget in {time.months[months_index]}, {year} \t[{total_diff}]")
+    print(f"${gnrl_exp:.2f}  \tof ${gnrl_budget:.2f} general budget in {time.months[months_index]}, {year} \t[{gnrl_diff}]")
+    print(f"${grcry_exp:.2f}  \tof ${grcry_budget:.2f} grocery budget in {time.months[months_index]}, {year} \t[{grcy_diff}]")
 
     if reached_current:
         print("\n")
@@ -477,7 +439,7 @@ def print_monthly_exp_summary(expenses: list[Item], months_index: int, year: int
 def get_full_summary() -> None:
     """ Gets a more verbose summary of the current months expenses than the one from the main menu """
 
-    flush_terminal()
+    tUtils.flush_terminal()
 
     expenses = get_cur_expenses()
     amount_by_cat = get_amount_by_cat(expenses)
@@ -505,7 +467,7 @@ def get_alltime_summary() -> None:
     months_index = 0
     cur_month_index = cur_month - 1
 
-    flush_terminal()
+    tUtils.flush_terminal()
 
     if len(expenses) > 0:
         for year_key in sorted(expenses.keys()):
@@ -529,7 +491,7 @@ def get_alltime_summary() -> None:
     while input("").strip().lower() != 'x':
         continue
 
-    flush_terminal()
+    tUtils.flush_terminal()
 
 # MISC USER ACTIONS
 ################################################################################################################################
@@ -537,7 +499,7 @@ def get_alltime_summary() -> None:
 def help() -> None:
     """ Prints out a list of commands for the app. May expand later to other help stuff """
 
-    flush_terminal()
+    tUtils.flush_terminal()
 
     print("Help Menu")
     print('-'*30)
@@ -553,7 +515,7 @@ def help() -> None:
     while input("").strip().lower() != 'x':
         continue
 
-    flush_terminal()
+    tUtils.flush_terminal()
 
 # DANGER ZONE USER ACTIONS
 ################################################################################################################################
@@ -569,7 +531,7 @@ def undo_last_expense() -> None:
         menu_message = "~~Nothing to undo!~~"
         return
 
-    flush_terminal()
+    tUtils.flush_terminal()
     message = "~~WARNING~~\nAre you sure you wish to undo the most recent CSV write?\nThis cannot be undone! [y/n]: "
     con = None
     while True:
@@ -591,7 +553,7 @@ def undo_last_expense() -> None:
             lines = lines[:-1]
 
             itm_name, itm_cat, itm_amount, itm_month, itm_day, itm_year, itm_cd = last_line.strip().split(',')
-            item = Item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), year=int(itm_year), cd=itm_cd)
+            item =item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), year=int(itm_year), cd=itm_cd)
 
             with open(most_recent_itm_path, 'w') as file:
                 file.writelines(lines)
@@ -607,12 +569,11 @@ def init() -> None:
     Also gets the current budgets from info.json """
 
     global cur_month, cur_day, cur_year
+    cur_month = time.cur_month
+    cur_day = time.cur_day
+    cur_year = time.cur_year
 
-    cur_month = datetime.datetime.now().month
-    cur_day = datetime.datetime.now().day
-    cur_year = datetime.datetime.now().year
-
-    with open(f"records/records{cur_year}.csv", 'a') as file:
+    with open(f"expense_tracker\\records\\records{cur_year}.csv", 'a') as file:
         pass
 
     init_json()
@@ -623,7 +584,7 @@ def init_json() -> None:
     file_name = 'info.json'
 
     if not os.path.exists(file_name):
-        flush_terminal()
+        tUtils.flush_terminal()
         print("info.json file not found. Creating a new one")
 
         data = {
@@ -633,11 +594,11 @@ def init_json() -> None:
         }
 
         data['total_budget'] = float(input("Enter total budget: "))
-        flush_terminal()
+        tUtils.flush_terminal()
         data['general_budget'] = float(input("Enter general budget: "))
-        flush_terminal()
+        tUtils.flush_terminal()
         data['grocery_budget'] = float(input("Enter grocery budget: "))
-        flush_terminal()
+        tUtils.flush_terminal()
 
         with open(file_name, 'w') as f:
             json.dump(data, f, indent=4)
@@ -648,16 +609,16 @@ def get_menu_summary() -> None:
     """ Gets and displays the main menu summary which includes expenses
     by category, account balances, and remaining budget """
 
-    flush_terminal()
+    tUtils.flush_terminal()
     expenses = get_cur_expenses()
     amount_by_cat = get_amount_by_cat(expenses)
     sum_expenses(expenses)
 
-    print(f"Expense Tracker [{months[cur_month - 1]}, {cur_year}]")
+    print(f"Expense Tracker [{time.months[cur_month - 1]}, {cur_year}]")
     if len(menu_message) > 0:
         print(menu_message)
-    lines(60)
-    spacing(1)
+    tUtils.lines(60)
+    tUtils.spacing(1)
 
     if len(expenses) > 0:
         print_amount_by_cat(amount_by_cat)
@@ -673,7 +634,7 @@ def get_user_action() -> None:
 
     action = input(f"\n\nx: quit | h: help\nWhat would you like to do:\n").strip().lower()
     if action == 'x':
-        close()
+        tUtils.close()
     elif action == 'e':
         menu_message = ""
         exp = get_user_expense()
@@ -695,7 +656,7 @@ def cli_loop() -> None:
     """ Loop that runs until user quits- displays main menu and gets user actions """
 
     while True:
-        flush_terminal()
+        tUtils.flush_terminal()
         get_menu_summary()
         get_user_action()
 
@@ -708,5 +669,3 @@ def main() -> None:
     init()
     cli_loop()
 
-if __name__ == "__main__":
-    main()

@@ -1,5 +1,2 @@
-records/*
-!records/
-!records/.gitkeep
-__pycache__
-info.json
+/expense_tracker/records/
+__pycache__/

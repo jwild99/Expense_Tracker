@@ -1,4 +1,4 @@
-import finance_tracker  
+import main_app
 
 if __name__ == "__main__":
-    finance_tracker.main()  
+    main_app.main()
