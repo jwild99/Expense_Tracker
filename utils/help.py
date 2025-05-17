@@ -1,5 +1,5 @@
-from . import terminal_utils as tUtils
-from . import user_action_utils as usrActUtils
+from . import terminal as tUtils
+from . import user_action as usrActUtils
 
 HELP_MESSAGE = """
 x - go back

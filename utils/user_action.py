@@ -1,9 +1,10 @@
-from . import terminal_utils as tUtils
+from . import terminal as tUtils
 from . import help as help
-from const import messages as messages
-from const import exceptions as exceptions
+from data import messages as messages
+from data import exceptions as exceptions
 
-from expense_tracker import expense_tracker as expApp
+from src import expense_tracker as expApp
+from src import views
 
 
 def get_action() -> str:
@@ -13,13 +14,15 @@ def get_action() -> str:
 
     return input(f"\n\nx: quit | h: help\nWhat would you like to do:\n").strip().lower()
 
-def validate_action(action: str) -> None:
+def is_valid(action: str) -> bool:
     if action not in action_dict.keys():
         messages.DEBUG_MESSAGE = f"~~Not a valid action~~\n{action_dict.keys()}"
+        return False
     else:
         messages.DEBUG_MESSAGE = ""
+        return True
 
-def execute_action(action: str) -> None:
+def execute(action: str) -> None:
     action_dict[action]()
 
 def go_back() -> None:
@@ -29,7 +32,10 @@ def go_back() -> None:
 action_dict = {
     "q": tUtils.close,
     "x": go_back,
-    "help": help.help_message,
-    "exp": expApp.main
+    "h": help.help_message,
+    "e": expApp.get_new_exp,
+    "u": expApp.undo_last_exp,
+    "s": views.display_verbose_menu,
+    "s -a": views.display_alltime_summary
 }
 

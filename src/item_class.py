@@ -12,9 +12,6 @@ class Item:
     def get_exp(self):
         return f"'{self.name}' | {self.category} | {self.amount:.2f} | {self.month}/{self.day}/{self.year}"
 
-    def get_dep(self):
-        return f"'{self.name}' | {self.amount:.2f} | {self.month}/{self.day}/{self.year}"
-
     def get_expf(self):
         if self.cd == 'c':
             return f"{self.month}/{self.day}/{self.year}        \t{self.category}       \t${self.amount:.2f}       \tCredit    \t'{self.name}'"
