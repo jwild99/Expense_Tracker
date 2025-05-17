@@ -1,6 +1,6 @@
 from data import expense_categories as expCat
-from utils import terminal as tUtils
-from data import time_const as time
+from utils import infrastructure as tUtils
+from data import time_vals as time
 
 def get_user_category() -> int:
     """ Gets user input for the category of an item """

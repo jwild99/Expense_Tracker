@@ -1,11 +1,12 @@
-import json
-from . import terminal as tUtils
-from data import file_paths as paths
-from . import file as fUtils
-from data import expVsBud as eb
+from . import infrastructure as Inf
 
-def init_budgets() -> None:
-        tUtils.flush_terminal()
+from data import file_paths as Paths
+from data import vals as Vals
+
+import json as Json
+
+def initBudgets() -> None:
+        Inf.flush_terminal()
         print("budgets.json file not found. Creating a new one...")
 
         data = {
@@ -15,25 +16,25 @@ def init_budgets() -> None:
         }
 
         data['total_budget'] = float(input("Enter total budget: "))
-        tUtils.flush_terminal()
+        Inf.flush_terminal()
         data['general_budget'] = float(input("Enter general budget: "))
-        tUtils.flush_terminal()
+        Inf.flush_terminal()
         data['grocery_budget'] = float(input("Enter grocery budget: "))
-        tUtils.flush_terminal()
+        Inf.flush_terminal()
 
-        new_file = open(paths.BUDGETS, 'w')
-        json.dump(data, new_file, indent=4)
+        with open(Paths.BUDGETS, 'w') as budgets:
+            Json.dump(data, budgets, indent=4)
 
         print(f"budgets.json file created successfully with new data.")
 
-def get_budgets() -> None:
+def getBudgets() -> None:
     """ Reads in the budget values from info.json and stores them as global variables """
 
-    file = fUtils.open_json(paths.BUDGETS,'r')
-    data = json.load(file)
+    with open(Paths.BUDGETS,'r') as budgets:
+        data = Json.load(budgets)
 
-    eb.total_budget = float(data["total_budget"])
-    eb.gnrl_budget = float(data["general_budget"])
-    eb.groc_budget = float(data["grocery_budget"])
+    Vals.totalBudget = float(data["total_budget"])
+    Vals.gnrlBudget = float(data["general_budget"])
+    Vals.grocBudget = float(data["grocery_budget"])
 
-    file.close()
+    budgets.close()

@@ -1,1 +1,2 @@
-BUDGETS = "data\\budgets.json"
+BUDGETS = "data/budgets.json"
+curExpFile = ""

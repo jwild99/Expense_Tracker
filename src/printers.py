@@ -1,22 +1,24 @@
 from . import item_class
-from . import expense_tracker as expApp
-from data import time_const as time
+from . import expenseApp as expApp
 
-def print_amount_by_cat(amount_by_cat: dict) -> None:
+from data import time_vals as time
+from data import vals as vals
+
+def printAmountByCat() -> None:
     print("Monthly expenses by category:")
-    for key, amount in amount_by_cat.items():
-        percentage = (amount / total_budget) * 100
+    for key, amount in vals.amountByCat.items():
+        percentage = (amount / vals.totalBudget) * 100
         if key.strip().lower() == "grocery":
             print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}% \t -want-> 20%")
         else:
             print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}%")
 
-def print_remaining_budget() -> None:
-    """ Displays the remaining amount of each budget type"""
 
-    print(f"\n${total_budget - total_exp:.2f}    \tof total budget remaining   \t[${total_budget:.2f}]")
-    print(f"${gnrl_budget - gnrl_exp:.2f}    \tof general budget remaining \t[${gnrl_budget:.2f}]")
-    print(f"${grcry_budget - grcry_exp:.2f}    \tof grocery budget remaining \t[${grcry_budget:.2f}]")
+def printRemainingBudget() -> None:
+    print(f"\n${vals.totalBudget - vals.totalExp:.2f}    \tof total budget remaining   \t[${vals.totalBudget:.2f}]")
+    print(f"${vals.gnrlBudget - vals.gnrlExp:.2f}    \tof general budget remaining \t[${vals.gnrlBudget:.2f}]")
+    print(f"${vals.grocBudget - vals.grocExp:.2f}    \tof grocery budget remaining \t[${vals.grocBudget:.2f}]")
+
 
 def print_daily_expenses(daily_expenses: list[item_class.Item]) -> None:
     """ Displays a day-by-day summary of expenses """
@@ -25,6 +27,7 @@ def print_daily_expenses(daily_expenses: list[item_class.Item]) -> None:
     for i in range(len(daily_expenses)):
         for exp in daily_expenses[i]:
             print(exp)
+
 
 def print_monthly_exp_summary(expenses: list[item_class.Item], months_index: int, year: int, reached_current: bool) -> None:
     """ Displays a summary of the given month to the console """

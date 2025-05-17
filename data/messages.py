@@ -1,2 +1,2 @@
-debug_message = ""
-menu_message = ""
+debug = ""
+menu = ""

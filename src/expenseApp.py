@@ -1,32 +1,24 @@
-from src.item_class import Item
-from utils import terminal as tUtils
-import os
-from utils import file as fUtils
-from data import expense_categories as exp_cats
 from . import user_input as inp
+
+from src.item_class import Item
+
+from utils import infrastructure as inf
+
+from data import expense_categories as expCats
+from data import time_vals as time
+from data import vals as vals
+from data import file_paths as paths
+
+import os
 
 
 most_recent_itm_path = ""
 
 menu_message = ""
 
-cur_month = 0
-cur_day = 0
-cur_year = 0
-
-total_budget = 0
-gnrl_budget = 0
-grcry_budget = 0
-
-total_exp = 0
-gnrl_exp = 0
-grcry_exp = 0
-
 
 def get_new_exp() -> type[Item]:
-    """ Collects from the user the necessary info to create a new expense and creates one """
-
-    tUtils.flush_terminal()
+    inf.flush_terminal()
     exp_name = inp.get_user_name()
     exp_amount = inp.get_user_amount()
     cat_num = inp.get_user_category()
@@ -35,14 +27,12 @@ def get_new_exp() -> type[Item]:
     exp_year = inp.get_user_year()
     exp_cd = inp.get_user_cd()
 
-    new_exp =Item(name=exp_name, category=exp_cats.categories[cat_num], amount=exp_amount, month=exp_month,
+    new_exp = Item(name=exp_name, category=expCats.categories[cat_num], amount=exp_amount, month=exp_month,
                       day=exp_day, year=exp_year, cd=exp_cd)
-    tUtils.flush_terminal()
+    inf.flush_terminal()
     return new_exp
 
 def save_exp(exp:Item) -> None:
-    """ Saves a new expense to the correct CSV. Also stores the most recent file path """
-
     global most_recent_itm_path, menu_message
 
     exp_file_path = f"records/records{exp.year}.csv"
@@ -75,53 +65,39 @@ def get_all_exp() -> dict:
 
     return expenses_dict
 
-def get_cur_exp() -> list[Item]:
-    """ Gets a list of the expenses from the current month """
+def getCurExp() -> None:
+    if not inf.fileExists(paths.curExpFile):
+        return
 
-    expenses: list[Item] = []
-    exp_file_path = f"records/records{cur_year}.csv"
-
-    if not os.path.exists(exp_file_path):
-        return []
-
-    with open(exp_file_path, 'r') as file:
-        lines = file.readlines()
+    with open(paths.curExpFile, 'r') as expFile:
+        lines = expFile.readlines()
 
         for line in lines:
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd = line.strip().split(',')
 
-                expenses.append(Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd))
+                vals.expenses.append(Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd))
 
-        file.close()
-
-    return expenses
+        expFile.close()
 
 
-def get_amount_by_cat(expenses: list[Item]) -> dict:
-    amount_by_cat = {}
-
-    for expense in expenses:
+def getAmountByCat() -> None:
+    for expense in vals.expenses:
         key = expense.category
-        if key in amount_by_cat:
-            amount_by_cat[key] += expense.amount
+        if key in vals.amountByCat:
+            vals.amountByCat[key] += expense.amount
         else:
-            amount_by_cat[key] = expense.amount
+            vals.amountByCat[key] = expense.amount
 
-    return amount_by_cat
+def sumExp() -> None:
+    vals.totalExp, vals.gnrlExp, vals.grcryExp = 0, 0, 0
 
-def sum_exp(expenses: list[Item]) -> None:
-    global total_exp, gnrl_exp, grcry_exp
+    for expense in vals.expenses:
+        vals.totalExp += expense.amount
 
-    total_exp, gnrl_exp, grcry_exp = 0, 0, 0
-
-    for expense in expenses:
-        if expense.name != "[CREDIT CARD PAYMENT]":
-            total_exp += expense.amount
-
-            if expense.category.lower() == "grocery":
-                grcry_exp += expense.amount
-            else:
-                gnrl_exp += expense.amount
+        if expense.category.lower() == "grocery":
+            grcryExp += expense.amount
+        else:
+            gnrlExp += expense.amount
 
 def get_daily_exp(expenses: list[Item]) -> list[str]:
     daily_expenses = [[] for _ in range(31)]
@@ -139,7 +115,7 @@ def undo_last_exp() -> None:
         menu_message = "~~Nothing to undo!~~"
         return
 
-    tUtils.flush_terminal()
+    inf.flush_terminal()
     message = "~~WARNING~~\nAre you sure you wish to undo the most recent CSV write?\nThis cannot be undone! [y/n]: "
     con = None
     while True:

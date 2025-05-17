@@ -1,20 +1,20 @@
-from . import terminal as tUtils
-from . import user_action as usrActUtils
+from . import infrastructure as Inf
+from . import user_action as UsrActns
 
 HELP_MESSAGE = """
 x - go back
 q - quit
-help - go to help page
-exp - go to expense tracker
+h - go to help page
+e - create a new expense
 """
 
-def help_message() -> None:
-    tUtils.flush_terminal()
+def helpMessage() -> None:
+    Inf.flushTerminal()
     print(HELP_MESSAGE)
     while True:
         usr_input = input().strip().lower()
 
         if usr_input == "x" or usr_input == "q":
-            usrActUtils.action_dict[usr_input]()
+            UsrActns.action_dict[usr_input]()
 
 
