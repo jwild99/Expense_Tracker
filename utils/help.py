@@ -2,10 +2,12 @@ from . import infrastructure as Inf
 from . import user_action as UsrActns
 
 HELP_MESSAGE = """
-x - go back
-q - quit
-h - go to help page
-e - create a new expense
+x    | go back
+q    | quit
+h    | go to help page
+e    | create a new expense
+s    | verbose summary of current month's expenses
+s -a | verbose summary of all-time expenses
 """
 
 def helpMessage() -> None:
