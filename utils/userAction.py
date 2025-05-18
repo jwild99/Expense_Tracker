@@ -30,8 +30,8 @@ action_dict = {
     "q": inf.close,
     "x": goBack,
     "h": help.helpMessage,
-    "e": expApp.get_new_exp,
-    "u": expApp.undo_last_exp,
+    "e": expApp.createNewExp,
+    "u": expApp.undoLastExp,
     "s": views.displayVerboseMenu,
     "s -a": views.displayAlltimeSummary
 }

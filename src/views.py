@@ -4,7 +4,7 @@ from . import expenseApp as expApp
 from utils import infrastructure as inf
 
 from data import messages as messages
-from data import time_vals as time
+from data import timeVals as time
 from data import vals as vals
 
 def displayVerboseMenu() -> None:

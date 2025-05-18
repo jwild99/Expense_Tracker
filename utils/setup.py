@@ -1,8 +1,8 @@
 from . import budgets as budget
 from . import infrastructure as inf
 
-from data import time_vals as time
-from data import file_paths as paths
+from data import timeVals as time
+from data import filePaths as paths
 
 import datetime
 

@@ -1,6 +1,6 @@
 from . import infrastructure as Inf
 
-from data import file_paths as Paths
+from data import filePaths as Paths
 from data import vals as Vals
 
 import json as Json

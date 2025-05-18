@@ -1,6 +1,6 @@
 import utils.infrastructure as inf
 import utils.setup as setup
-import utils.user_action as usrActns
+import utils.userAction as usrActns
 
 import src.views as views
 

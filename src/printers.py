@@ -1,7 +1,7 @@
-from . import item_class
+from . import itemClass
 from . import expenseApp as expApp
 
-from data import time_vals as time
+from data import timeVals as time
 from data import vals as vals
 
 def printAmountByCat() -> None:
@@ -20,7 +20,7 @@ def printRemainingBudget() -> None:
     print(f"${vals.grocBudget - vals.grocExp:.2f}    \tof grocery budget remaining \t[${vals.grocBudget:.2f}]")
 
 
-def print_daily_expenses(daily_expenses: list[item_class.Item]) -> None:
+def print_daily_expenses(daily_expenses: list[itemClass.Item]) -> None:
     """ Displays a day-by-day summary of expenses """
 
     print("Date \t\t\tCategory \tAmount \t\tCard Type \tName\n")
@@ -29,7 +29,7 @@ def print_daily_expenses(daily_expenses: list[item_class.Item]) -> None:
             print(exp)
 
 
-def print_monthly_exp_summary(expenses: list[item_class.Item], months_index: int, year: int, reached_current: bool) -> None:
+def print_monthly_exp_summary(expenses: list[itemClass.Item], months_index: int, year: int, reached_current: bool) -> None:
     """ Displays a summary of the given month to the console """
 
     if len(expenses) <= 0:

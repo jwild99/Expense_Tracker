@@ -1,5 +1,5 @@
 from . import infrastructure as Inf
-from . import user_action as UsrActns
+from . import userAction as UsrActns
 
 HELP_MESSAGE = """
 x    | go back

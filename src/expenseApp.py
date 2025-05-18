@@ -1,48 +1,42 @@
-from . import user_input as inp
+from . import expInput as expInp
 
-from src.item_class import Item
+from src.itemClass import Item
 
 from utils import infrastructure as inf
 
-from data import expense_categories as expCats
-from data import time_vals as time
+from data import expenseCategories as expCats
+from data import timeVals as time
 from data import vals as vals
-from data import file_paths as paths
+from data import filePaths as paths
+from data import messages as messages
 
 import os
 
 
-most_recent_itm_path = ""
+def createNewExp() -> type[Item]:
+    inf.flushTerminal()
+    expName = expInp.getName()
+    expAmount = expInp.getAmount()
+    catNum = expInp.getCategory()
+    expMonth = expInp.getMonth()
+    expDay = expInp.getDay(month=expMonth)
+    expYear = expInp.getYear()
+    expCd = expInp.getCd()
 
-menu_message = ""
+    newExp = Item(name=expName, category=expCats.categories[catNum], amount=expAmount, month=expMonth,
+                      day=expDay, year=expYear, cd=expCd)
+    inf.flushTerminal()
+    saveExp(newExp)
 
+def saveExp(exp:Item) -> None:
+    expFilePath = f"records\\expenses-{exp.year}.csv"
+    paths.curExpFile = expFilePath
 
-def get_new_exp() -> type[Item]:
-    inf.flush_terminal()
-    exp_name = inp.get_user_name()
-    exp_amount = inp.get_user_amount()
-    cat_num = inp.get_user_category()
-    exp_month = inp.get_user_month()
-    exp_day = inp.get_user_day(month=exp_month)
-    exp_year = inp.get_user_year()
-    exp_cd = inp.get_user_cd()
-
-    new_exp = Item(name=exp_name, category=expCats.categories[cat_num], amount=exp_amount, month=exp_month,
-                      day=exp_day, year=exp_year, cd=exp_cd)
-    inf.flush_terminal()
-    return new_exp
-
-def save_exp(exp:Item) -> None:
-    global most_recent_itm_path, menu_message
-
-    exp_file_path = f"records/records{exp.year}.csv"
-    most_recent_itm_path = f"records/records{exp.year}.csv"
-
-    with open(exp_file_path, 'a') as file:
+    with open(expFilePath, 'a') as file:
         file.write(f"{exp.name},{exp.category},{exp.amount},{exp.month},{exp.day},{exp.year},{exp.cd}\n")
         file.close()
 
-    menu_message = f"Saved expense: [{exp.get_exp()}] to {exp_file_path}"
+    messages.menu = f"Saved expense: [{exp.get_exp()}] to {expFilePath}"
 
 def get_all_exp() -> dict:
     exp_file_dir = f"records/"
@@ -108,10 +102,10 @@ def get_daily_exp(expenses: list[Item]) -> list[str]:
     return daily_expenses
 
 
-def undo_last_exp() -> None:
-    global menu_message
+def undoLastExp() -> None:
+    lastExpFilePath = paths.curExpFile
 
-    if len(most_recent_itm_path) <= 0:
+    if len(lastExpFilePath) <= 0:
         menu_message = "~~Nothing to undo!~~"
         return
 
@@ -128,7 +122,7 @@ def undo_last_exp() -> None:
             break
 
     if con:
-        with open(most_recent_itm_path, 'r') as file:
+        with open(lastExpFilePath, 'r') as file:
             lines = file.readlines()
             file.close()
 
@@ -139,8 +133,8 @@ def undo_last_exp() -> None:
             itm_name, itm_cat, itm_amount, itm_month, itm_day, itm_year, itm_cd = last_line.strip().split(',')
             item =item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), year=int(itm_year), cd=itm_cd)
 
-            with open(most_recent_itm_path, 'w') as file:
+            with open(lastExpFilePath, 'w') as file:
                 file.writelines(lines)
                 file.close()
 
-        menu_message = f"Removed {item.get_dep()} from {most_recent_itm_path}"
+        messages.menu = f"Removed {item.get_dep()} from {lastExpFilePath}"
