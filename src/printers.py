@@ -20,12 +20,12 @@ def printRemainingBudget() -> None:
     print(f"${vals.grocBudget - vals.grocExp:.2f}    \tof grocery budget remaining \t[${vals.grocBudget:.2f}]")
 
 
-def print_daily_expenses(daily_expenses: list[itemClass.Item]) -> None:
+def printDailyExp() -> None:
     """ Displays a day-by-day summary of expenses """
 
     print("Date \t\t\tCategory \tAmount \t\tCard Type \tName\n")
-    for i in range(len(daily_expenses)):
-        for exp in daily_expenses[i]:
+    for i in range(len(vals.dailyExp)):
+        for exp in vals.dailyExp[i]:
             print(exp)
 
 

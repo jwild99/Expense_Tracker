@@ -93,13 +93,13 @@ def sumExp() -> None:
         else:
             gnrlExp += expense.amount
 
-def get_daily_exp(expenses: list[Item]) -> list[str]:
-    daily_expenses = [[] for _ in range(31)]
+def getDailyExp() -> None:
+    dailyExpenses = [[] for _ in range(31)]
 
-    for expense in expenses:
-        daily_expenses[expense.day - 1].append(expense.get_expf())
+    for expense in vals.expenses:
+        dailyExpenses[expense.day - 1].append(expense.get_expf())
 
-    return daily_expenses
+    vals.dailyExp = dailyExpenses
 
 
 def undoLastExp() -> None:

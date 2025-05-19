@@ -8,21 +8,21 @@ from data import timeVals as time
 from data import vals as vals
 
 def displayVerboseMenu() -> None:
-    inf.flush_terminal()
+    inf.flushTerminal()
 
-    expenses = expApp.get_cur_exp()
-    amount_by_cat = expApp.get_amount_by_cat(expenses)
-    daily_expenses = expApp.get_daily_exp(expenses)
-    expApp.sum_exp(expenses)
+    expApp.getCurExp()
+    expApp.getAmountByCat()
+    expApp.getDailyExp()
+    expApp.sumExp()
 
-    if len(expenses) > 0:
-        printers.print_daily_expenses(daily_expenses)
+    if len(vals.expenses) > 0:
+        printers.printDailyExp()
         print("\n\n")
-        printers.print_amount_by_cat(amount_by_cat)
+        printers.printAmountByCat()
     else:
         print("No expenses to show at this time.")
 
-    printers.print_remaining_budget()
+    printers.printRemainingBudget()
 
     print("\n'x' to go back")
     while input("").strip().lower() != 'x':

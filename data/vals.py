@@ -9,7 +9,8 @@ grocExp = 0
 gnrlBudget = 0
 gnrlExp = 0
 
-expenses : list[Item] = []
-amountByCat : dict = {}
+expenses: list[Item] = []
+amountByCat: dict = {}
+dailyExp: list[str] = []
 
 
