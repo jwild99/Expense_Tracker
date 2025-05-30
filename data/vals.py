@@ -1,13 +1,7 @@
 from src.itemClass import Item
 
-totalBudget = 0
-totalExp = 0
-
-grocBudget = 0
-grocExp = 0
-
-gnrlBudget = 0
-gnrlExp = 0
+budgets: dict = {}
+sumExp: dict = {}
 
 expenses: list[Item] = []
 amountByCat: dict = {}

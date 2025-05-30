@@ -7,6 +7,8 @@ from data import exceptions as exceptions
 from src import expenseApp as expApp
 from src import views
 
+from utils import budgets as budgets
+
 
 def getAction() -> str:
     return input(f"\n\nq: quit | h: help\nWhat would you like to do:\n").strip().lower()
@@ -33,6 +35,7 @@ action_dict = {
     "e": expApp.createNewExp,
     "u": expApp.undoLastExp,
     "s": views.displayVerboseMenu,
-    "s -a": views.displayAlltimeSummary
+    "s -a": views.displayAlltimeSummary,
+    "b": budgets.editBudgets
 }
 

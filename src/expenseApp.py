@@ -4,7 +4,6 @@ from src.itemClass import Item
 
 from utils import infrastructure as inf
 
-from data import expenseCategories as expCats
 from data import timeVals as time
 from data import vals as vals
 from data import filePaths as paths
@@ -17,13 +16,13 @@ def createNewExp() -> type[Item]:
     inf.flushTerminal()
     expName = expInp.getName()
     expAmount = expInp.getAmount()
-    catNum = expInp.getCategory()
+    catNum = expInp.getCategory() + 1
     expMonth = expInp.getMonth()
     expDay = expInp.getDay(month=expMonth)
     expYear = expInp.getYear()
     expCd = expInp.getCd()
 
-    newExp = Item(name=expName, category=expCats.categories[catNum], amount=expAmount, month=expMonth,
+    newExp = Item(name=expName, category=list(vals.budgets.keys())[catNum], amount=expAmount, month=expMonth,
                       day=expDay, year=expYear, cd=expCd)
     inf.flushTerminal()
     saveExp(newExp)
@@ -38,7 +37,7 @@ def saveExp(exp:Item) -> None:
 
     messages.menu = f"Saved expense: [{exp.get_exp()}] to {expFilePath}"
 
-def get_all_exp() -> dict:
+def getAllExp() -> dict:
     exp_file_dir = f"records/"
     expenses_dict = {}
 
@@ -65,7 +64,7 @@ def getCurExp() -> None:
 
     with open(paths.curExpFile, 'r') as expFile:
         lines = expFile.readlines()
-
+        vals.expenses.clear()
         for line in lines:
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd = line.strip().split(',')
 
@@ -75,6 +74,9 @@ def getCurExp() -> None:
 
 
 def getAmountByCat() -> None:
+    for key in vals.amountByCat.keys():
+        vals.amountByCat[key] = 0
+
     for expense in vals.expenses:
         key = expense.category
         if key in vals.amountByCat:
@@ -83,15 +85,16 @@ def getAmountByCat() -> None:
             vals.amountByCat[key] = expense.amount
 
 def sumExp() -> None:
-    vals.totalExp, vals.gnrlExp, vals.grcryExp = 0, 0, 0
+    for key in vals.sumExp.keys():
+        vals.sumExp[key] = 0
+
+    for key in vals.budgets.keys():
+        if key not in vals.sumExp.keys():
+            vals.sumExp[key] = 0
 
     for expense in vals.expenses:
-        vals.totalExp += expense.amount
-
-        if expense.category.lower() == "grocery":
-            grcryExp += expense.amount
-        else:
-            gnrlExp += expense.amount
+        vals.sumExp["total"] += expense.amount
+        vals.sumExp[expense.category] += expense.amount
 
 def getDailyExp() -> None:
     dailyExpenses = [[] for _ in range(31)]

@@ -29,27 +29,27 @@ def displayVerboseMenu() -> None:
         continue
 
 def displayAlltimeSummary() -> None:
-    expenses = expApp.get_all_exp()
-    reached_current = False
-    months_index = 0
-    cur_month_index = time.cur_month - 1
+    expenses = expApp.getAllExp()
+    reachedCurrent = False
+    monthsIndex = 0
+    curMonthIndex = time.month - 1
 
-    inf.flush_terminal()
+    inf.flushTerminal()
 
     if len(expenses) > 0:
-        for year_key in sorted(expenses.keys()):
-            months_index = 0
-            for month_list in expenses[year_key]:
-                if (int(year_key) == time.year and months_index == cur_month_index):
-                    reached_current = True
+        for yearKey in sorted(expenses.keys()):
+            monthsIndex = 0
+            for monthList in expenses[yearKey]:
+                if (int(yearKey) == time.year and monthsIndex == curMonthIndex):
+                    reachedCurrent = True
                     break
 
-                printers.print_monthly_exp_summary(expenses=month_list, months_index=months_index, year=int(year_key), reached_current=reached_current)
-                months_index += 1
+                printers.printMonthlyExpSummary(expenses=monthList, months_index=monthsIndex, year=int(yearKey), reached_current=reachedCurrent)
+                monthsIndex += 1
 
-            if reached_current:
-                printers.print_monthly_exp_summary(expenses=month_list, months_index=months_index, year=int(year_key), reached_current=reached_current)
-                expApp.sum_exp(month_list)
+            if reachedCurrent:
+                printers.printMonthlyExpSummary(expenses=monthList, months_index=monthsIndex, year=int(yearKey), reached_current=reachedCurrent)
+                expApp.sumExp()
                 break
     else:
         print("No expenses to show at this time.")
@@ -58,7 +58,7 @@ def displayAlltimeSummary() -> None:
     while input("").strip().lower() != 'x':
         continue
 
-    inf.flush_terminal()
+    inf.flushTerminal()
 
 def displayMenu() -> None:
     inf.flushTerminal()

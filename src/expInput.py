@@ -1,28 +1,32 @@
-from data import expenseCategories as expCat
+from data import vals as vals
 from utils import infrastructure as tUtils
 from data import timeVals as time
 
 def getCategory() -> int:
     while True:
         print("Select a category:")
-        for i, category_name in enumerate(expCat.categories):
-            print(f"    {i + 1}. {category_name}")
+        i = 1
+        for catName in vals.budgets.keys():
+            if str.lower(catName) == "total":
+                continue
+            print(f"    {i}. {catName}")
+            i += 1
 
-        val_range = f"[1 - {len(expCat.categories)}]"
+        valRange = f"[1 - {i - 1}]"
 
         try:
-            cat_num = int(input(f"Enter category number {val_range}: ")) - 1
+            catNum = int(input(f"Enter category number {valRange}: ")) - 1
 
-            if cat_num not in range(0, len(expCat.categories)):
+            if catNum not in range(0, len(vals.budgets.keys())):
                 raise Exception
 
             tUtils.flushTerminal()
             break
         except Exception:
             tUtils.flushTerminal()
-            print(f"\n\n~~ERROR~~\nInvalid category number entered. Please enter a value between 1 and {len(expCat.categories)}.\n\n")
+            print(f"\n\n~~ERROR~~\nInvalid category number entered. Please enter a value between 1 and {len(vals.budgets.keys())}.\n\n")
 
-    return cat_num
+    return catNum
 
 def getDay(month: int) -> int:
     while True:
@@ -30,7 +34,7 @@ def getDay(month: int) -> int:
             inp = input("Enter a day number [1-31]- leave blank for current day: ")
 
             if inp == '':
-                day = time.curDay
+                day = time.day
             else:
                 day = int(inp)
 
@@ -59,7 +63,7 @@ def getMonth() -> int:
             inp = input("Enter a month number [1-12]- leave blank for current month: ")
 
             if inp == '':
-                month = time.curMonth
+                month = time.month
             else:
                 month = int(inp)
 
@@ -80,7 +84,7 @@ def getYear() -> int:
             inp = input("Enter a year number- leave blank for current year: ")
 
             if inp == '':
-                year = time.curYear
+                year = time.year
             else:
                 year = int(inp)
 

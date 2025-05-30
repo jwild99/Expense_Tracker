@@ -8,6 +8,7 @@ h    | go to help page
 e    | create a new expense
 s    | verbose summary of current month's expenses
 s -a | verbose summary of all-time expenses
+b    | edit budgets
 """
 
 def helpMessage() -> None:
