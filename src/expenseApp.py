@@ -112,7 +112,7 @@ def undoLastExp() -> None:
         menu_message = "~~Nothing to undo!~~"
         return
 
-    inf.flush_terminal()
+    inf.flushTerminal()
     message = "~~WARNING~~\nAre you sure you wish to undo the most recent CSV write?\nThis cannot be undone! [y/n]: "
     con = None
     while True:
@@ -134,7 +134,7 @@ def undoLastExp() -> None:
             lines = lines[:-1]
 
             itm_name, itm_cat, itm_amount, itm_month, itm_day, itm_year, itm_cd = last_line.strip().split(',')
-            item =item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), year=int(itm_year), cd=itm_cd)
+            item = Item(name=itm_name, category=itm_cat, amount=float(itm_amount), month=int(itm_month), day=int(itm_day), year=int(itm_year), cd=itm_cd)
 
             with open(lastExpFilePath, 'w') as file:
                 file.writelines(lines)

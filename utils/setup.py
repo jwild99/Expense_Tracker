@@ -15,8 +15,6 @@ def init() -> None:
     if not inf.fileExists(paths.BUDGETS):
         budget.initBudgets()
 
-    budget.getBudgets()
-
     with open(f"records/expenses-{time.year}.csv", 'a') as file:
         pass
 

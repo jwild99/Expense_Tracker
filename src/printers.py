@@ -6,21 +6,20 @@ from data import vals as vals
 
 def printAmountByCat() -> None:
     print("Monthly expenses by category:")
+    print(f"    Category:        \tAmount    \tPercentage Total    \tPercentage Local")
     for key, amount in vals.amountByCat.items():
         percentage = (amount / vals.budgets["total"]) * 100
-        if key.strip().lower() == "grocery":
-            print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}%")
-        else:
-            print(f"    {key}:   \t${amount:.2f}    \t{percentage:.2f}%")
+        localPercentage = (amount / vals.budgets[key]) * 100
+        print(f"    {key}:        \t${amount:.2f}    \t{percentage:.2f}%    \t\t{localPercentage:.2f}%")
 
 
 def printRemainingBudget() -> None:
-    print(f"\n${vals.budgets["total"] - vals.sumExp["total"]:.2f}    \tof total budget remaining   \t[${vals.budgets["total"]:.2f}]")
+    print(f"\n${vals.budgets["total"] - vals.sumExp["total"]:.2f}    \tof total budget remaining          \t[${vals.budgets["total"]:.2f}]")
 
     for key in vals.budgets.keys():
         if str.lower(key) == "total":
             continue
-        print(f"${vals.budgets[key] - vals.sumExp[key]:.2f}    \tof {key} budget remaining   \t[${vals.budgets[key]:.2f}]")
+        print(f"${vals.budgets[key] - vals.sumExp[key]:.2f}    \tof {key} budget remaining          \t[${vals.budgets[key]:.2f}]")
 
 
 def printDailyExp() -> None:
