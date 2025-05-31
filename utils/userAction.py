@@ -24,13 +24,10 @@ def isValid(action: str) -> bool:
 def execute(action: str) -> None:
     action_dict[action]()
 
-def goBack() -> None:
-    raise exceptions.BreakLoop
-
 
 action_dict = {
     "q": inf.close,
-    "x": goBack,
+    "x": inf.goBack,
     "h": help.helpMessage,
     "e": expApp.createNewExp,
     "u": expApp.undoLastExp,

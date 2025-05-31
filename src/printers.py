@@ -56,9 +56,9 @@ def printMonthlyExpSummary(expenses: list[itemClass.Item], months_index: int, ye
         print("No expenses to show for this month.")
 
     print("\n")
-    for key in vals.budgets.keys():
+    for key in vals.monthlyBudgets.keys():
         exp = vals.sumExp[key]
-        budget = vals.budgets[key]
+        budget = vals.monthlyBudgets[key]
 
         diff = f"{budget - exp:.2f}"
         print(f"${exp:.2f}  \tof [${budget:.2f}] {key} \tbudget spent | {diff} remaing")

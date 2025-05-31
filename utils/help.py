@@ -1,5 +1,4 @@
 from . import infrastructure as Inf
-from . import userAction as UsrActns
 
 HELP_MESSAGE = """
 x    | go back
@@ -17,7 +16,10 @@ def helpMessage() -> None:
     while True:
         usr_input = input().strip().lower()
 
-        if usr_input == "x" or usr_input == "q":
-            UsrActns.action_dict[usr_input]()
+        if usr_input == "x":
+            Inf.goBack()
+        elif usr_input == "q":
+            Inf.close()
+
 
 

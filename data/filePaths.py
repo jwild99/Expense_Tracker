@@ -1,2 +1,3 @@
-BUDGETS = "data/budgets.json"
+curBudgetFile = "data/budgets.json"
 curExpFile = ""
+curBudgetRecord = ""

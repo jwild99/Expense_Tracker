@@ -28,7 +28,7 @@ def createNewExp() -> type[Item]:
     saveExp(newExp)
 
 def saveExp(exp:Item) -> None:
-    expFilePath = f"records\\expenses-{exp.year}.csv"
+    expFilePath = f"records\\expenses\\expenses-{exp.year}.csv"
     paths.curExpFile = expFilePath
 
     with open(expFilePath, 'a') as file:
@@ -38,14 +38,15 @@ def saveExp(exp:Item) -> None:
     messages.menu = f"Saved expense: [{exp.get_exp()}] to {expFilePath}"
 
 def getAllExp() -> dict:
-    exp_file_dir = f"records/"
+    exp_file_dir = f"records/expenses"
     expenses_dict = {}
 
     for filepath in os.listdir(exp_file_dir):
-        with open(f"records/{filepath}", 'r') as file:
+        with open(f"records/expenses/{filepath}", 'r') as file:
             lines = file.readlines()
 
             for line in lines:
+                print(line)
                 exp_name, exp_cat, exp_amount, exp_month, exp_day, exp_year, exp_cd = line.strip().split(',')
                 expense =Item(name=exp_name, category=exp_cat, amount=float(exp_amount), month=int(exp_month), day=int(exp_day), year=int(exp_year), cd=exp_cd)
                 if expense.year in expenses_dict:

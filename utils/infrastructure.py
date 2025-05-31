@@ -2,6 +2,8 @@ import sys
 import os
 import platform
 
+from data import exceptions as Exceptions
+
 def flushTerminal() -> None:
     """ Flushes print buffers and clears the terminal """
 
@@ -30,3 +32,6 @@ def lines(num) -> None:
 
 def fileExists(file_path: str) -> bool:
     return os.path.exists(file_path)
+
+def goBack() -> None:
+    raise Exceptions.BreakLoop

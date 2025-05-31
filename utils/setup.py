@@ -12,13 +12,17 @@ def init() -> None:
     time.day = datetime.datetime.now().day
     time.year = datetime.datetime.now().year
 
-    if not inf.fileExists(paths.BUDGETS):
+    if not inf.fileExists(paths.curBudgetFile):
         budget.initBudgets()
 
-    with open(f"records/expenses-{time.year}.csv", 'a') as file:
+    with open(f"records/expenses/expenses-{time.year}.csv", 'a') as file:
         pass
 
-    paths.curExpFile = f"records/expenses-{time.year}.csv"
+    paths.curExpFile = f"records/expenses/expenses-{time.year}.csv"
+    paths.curBudgetRecord = f"records/budgets/budgets-{time.month}-{time.year}.json"
+
+    if not inf.fileExists(paths.curBudgetRecord):
+        budget.initBudgetsRecord()
 
 
 

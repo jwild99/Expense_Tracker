@@ -2,6 +2,7 @@ from . import printers as printers
 from . import expenseApp as expApp
 
 from utils import infrastructure as inf
+from utils import budgets as Budgets
 
 from data import messages as messages
 from data import timeVals as time
@@ -43,7 +44,7 @@ def displayAlltimeSummary() -> None:
                 if (int(yearKey) == time.year and monthsIndex == curMonthIndex):
                     reachedCurrent = True
                     break
-
+                Budgets.getMontlyBudgets(month=monthsIndex, year=int(yearKey))
                 printers.printMonthlyExpSummary(expenses=monthList, months_index=monthsIndex, year=int(yearKey), reached_current=reachedCurrent)
                 monthsIndex += 1
 

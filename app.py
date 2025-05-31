@@ -15,7 +15,7 @@ def cliLoop() -> None:
     while True:
         try:
             inf.flushTerminal()
-            budget.getBudgets()
+            budget.getCurBudgets()
             views.displayMenu()
 
             action = usrActns.getAction()

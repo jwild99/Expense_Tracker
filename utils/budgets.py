@@ -2,10 +2,19 @@ from . import infrastructure as Inf
 
 from data import filePaths as Paths
 from data import vals as Vals
-from data import exceptions
+from data import timeVals as Time
 
 import json as Json
 import sys
+
+def initBudgetsRecord():
+    with open(Paths.curBudgetFile, "r") as curBudgets:
+        print(curBudgets)
+        data = Json.load(curBudgets)
+
+        with open(Paths.curBudgetRecord, "w") as curRecord:
+            Json.dump(data, curRecord, indent=4)
+
 
 def initBudgets() -> None:
         Inf.flushTerminal()
@@ -25,16 +34,27 @@ def initBudgets() -> None:
              budget = float(input(f"Enter amount for category {cat}: "))
              data[cat] = budget
 
-        with open(Paths.BUDGETS, 'w') as budgets:
+        with open(Paths.curBudgetFile, 'w') as budgets:
             Json.dump(data, budgets, indent=4)
+
+        with open(Paths.curBudgetRecord, 'w') as budgetsRecord:
+            Json.dump(data, budgetsRecord, indent=4)
 
         print(f"budgets.json file created successfully with new data.")
 
-def getBudgets() -> None:
+def getCurBudgets() -> None:
     """ Reads in the budget values from info.json and stores them as global variables """
 
-    with open(Paths.BUDGETS,'r') as budgets:
+    with open(Paths.curBudgetFile,'r') as budgets:
         Vals.budgets = Json.load(budgets)
+
+    budgets.close()
+
+def getMontlyBudgets(month: int, year: int) -> None:
+    """ Reads in the budget values from info.json and stores them as global variables """
+
+    with open(f"records/budgets/budgets-{Time.month}-{Time.year}.json",'r') as budgets:
+        Vals.monthlyBudgets = Json.load(budgets)
 
     budgets.close()
 
@@ -43,7 +63,7 @@ def editBudgets() -> None:
     Inf.flushTerminal()
 
     data  = {}
-    with open(Paths.BUDGETS, 'r') as budgets:
+    with open(Paths.curBudgetFile, 'r') as budgets:
         data = Json.load(budgets)
 
         while True:
@@ -68,13 +88,15 @@ def editBudgets() -> None:
                 budget = float(input(f"Enter amount for category {cat}: "))
                 data[cat] = budget
             elif str.lower(budgetNum) == 'x':
-                 raise exceptions.BreakLoop
+                 Inf.goBack()
             elif str.lower(budgetNum) == 'q':
-                Inf.flushTerminal()
-                sys.exit()
+                Inf.close()
 
-            with open(Paths.BUDGETS, 'w') as budgets:
+            with open(Paths.curBudgetFile, 'w') as budgets:
                 Json.dump(data, budgets, indent=4)
+
+            with open(Paths.curBudgetRecord, 'w') as budgetsRecord:
+                Json.dump(data, budgetsRecord, indent=4)
 
     print(f"budgets.json file created successfully with new data.")
 
