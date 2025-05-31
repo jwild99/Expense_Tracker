@@ -29,10 +29,10 @@ action_dict = {
     "q": inf.close,
     "x": inf.goBack,
     "h": help.helpMessage,
-    "e": expApp.createNewExp,
+    "ex": expApp.createNewExp,
     "u": expApp.undoLastExp,
-    "s": views.displayVerboseMenu,
-    "s -a": views.displayAlltimeSummary,
+    "sm": views.displayVerboseMenu,
+    "sm -a": views.displayAlltimeSummary,
     "b": budgets.editBudgets
 }
 
