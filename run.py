@@ -1,4 +1,4 @@
-import app
+import cli as Cli
 
 if __name__ == "__main__":
-    app.main()
+    Cli.main()

@@ -2,7 +2,7 @@ from . import expInput as expInp
 
 from src.itemClass import Item
 
-from utils import infrastructure as inf
+from utils import systemUtils as inf
 
 from data import timeVals as time
 from data import vals as vals
@@ -12,7 +12,7 @@ from data import messages as messages
 import os
 
 
-def createNewExp() -> type[Item]:
+def createNewExp():
     inf.flushTerminal()
     expName = expInp.getName()
     expAmount = expInp.getAmount()
@@ -21,7 +21,6 @@ def createNewExp() -> type[Item]:
     expDay = expInp.getDay(month=expMonth)
     expYear = expInp.getYear()
     expCd = expInp.getCd()
-
     newExp = Item(name=expName, category=list(vals.budgets.keys())[catNum], amount=expAmount, month=expMonth,
                       day=expDay, year=expYear, cd=expCd)
     inf.flushTerminal()

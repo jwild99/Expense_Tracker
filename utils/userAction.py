@@ -1,38 +1,34 @@
-from . import infrastructure as inf
-from . import help as help
-
-from data import messages as messages
-from data import exceptions as exceptions
-
-from src import expenseApp as expApp
-from src import views
-
-from utils import budgets as budgets
-
+from . import systemUtils as sUtils
+from . import help as Help
+from data import messages as Messages
+from src import expenseApp as ExpApp
+from src import views as Views
+from utils import budgetManager as Budgets
+from rich.prompt import Prompt
 
 def getAction() -> str:
-    return input(f"\n\nq: quit | h: help\nWhat would you like to do:\n").strip().lower()
+    actionInput = Prompt.ask(f"", default="")
+    return actionInput.strip().lower()
 
 def isValid(action: str) -> bool:
     if action not in action_dict.keys():
-        messages.debug = f"~~Not a valid action~~"
+        Messages.debug = f"~~Not a valid action~~"
         return False
     else:
-        messages.debug = ""
+        Messages.debug = ""
         return True
 
 def execute(action: str) -> None:
     action_dict[action]()
 
-
 action_dict = {
-    "q": inf.close,
-    "x": inf.goBack,
-    "h": help.helpMessage,
-    "ex": expApp.createNewExp,
-    "u": expApp.undoLastExp,
-    "sm": views.displayVerboseMenu,
-    "sm -a": views.displayAlltimeSummary,
-    "b": budgets.editBudgets
+    "q": sUtils.close,
+    "x": sUtils.goBack,
+    "h": Help.helpMessage,
+    "ex": ExpApp.createNewExp,
+    "u": ExpApp.undoLastExp,
+    "sm": Views.displayVerboseMenu,
+    "sm -a": Views.displayAlltimeSummary,
+    "b": Budgets.editBudgets
 }
 
